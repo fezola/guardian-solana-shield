@@ -1,4 +1,3 @@
-
 import { AlertTriangle, Fingerprint, Lock, Mail, Clock, Shield } from "lucide-react";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -117,16 +116,16 @@ if (!confirmed) throw new Error("OTP validation failed");`,
     <section id="transaction-flow" className="py-24 bg-muted/5">
       <div className="container">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4 gradient-text">
+          <h2 className="text-3xl font-bold mb-4 gradient-text animate-fade-in">
             Secure Transaction Flow
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto animate-fade-in">
             Multi-layered transaction protection system with simulation, biometric verification, PIN, OTP, and time-lock features.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-          <div>
+          <div className="animate-fade-in" style={{ animationDelay: "0.2s", animationFillMode: "backwards" }}>
             <div className="mb-8">
               <h3 className="text-xl font-bold mb-4">Multi-Factor Protection Layers</h3>
               <div className="space-y-4">
@@ -175,7 +174,7 @@ if (!confirmed) throw new Error("OTP validation failed");`,
             </Card>
           </div>
 
-          <div>
+          <div className="animate-fade-in" style={{ animationDelay: "0.4s", animationFillMode: "backwards" }}>
             <Card className="mb-6">
               <CardContent className="pt-6">
                 <div className="flex items-center mb-4">

@@ -6,8 +6,8 @@ const HowItWorksSection = () => {
   return (
     <section id="how-it-works" className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-feature-gradient z-0" />
-      
-      <div className="container relative z-10">
+
+      <div className="container relative z-10 animate-fade-in">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">How GuardianLayer Works</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -52,7 +52,9 @@ const HowItWorksSection = () => {
         </div>
 
         <div className="text-center">
-          <Button className="button-glow">Learn More About Our Technology</Button>
+          <Button className="button-glow animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            Learn More About Our Technology
+          </Button>
         </div>
       </div>
     </section>

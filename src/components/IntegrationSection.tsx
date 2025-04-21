@@ -1,11 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 
 const IntegrationSection = () => {
   return (
     <section id="integration" className="py-24 bg-muted/5">
       <div className="container">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-3xl font-bold mb-4">Simple Integration</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Add GuardianLayer to your Solana wallet application in just a few steps,
@@ -14,7 +13,7 @@ const IntegrationSection = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-          <div>
+          <div className="animate-fade-in">
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-4">Integrate with Just a Few Lines of Code</h3>
               <p className="text-muted-foreground mb-4">
@@ -75,7 +74,7 @@ const secureTransaction = async () => {
             </div>
           </div>
 
-          <div className="p-6 rounded-xl border border-border/50 bg-muted/30 backdrop-blur-sm">
+          <div className="p-6 rounded-xl border border-border/50 bg-muted/30 backdrop-blur-sm animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <h3 className="text-xl font-bold mb-4">Or Use Our React Components</h3>
             <p className="text-muted-foreground mb-6">
               For even faster integration, use our pre-built React components that handle all the security
@@ -102,7 +101,9 @@ function App() {
               </pre>
             </div>
 
-            <Button variant="outline" className="w-full">Explore React Components</Button>
+            <Button variant="outline" className="w-full">
+              Explore React Components
+            </Button>
           </div>
         </div>
       </div>
