@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,11 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				solana: '#9945FF',
+				guardianPurple: '#9b87f5',
+				guardianBlue: '#7E69AB',
+				guardianDark: '#1A1F2C',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,12 +89,26 @@ export default {
 					to: {
 						height: '0'
 					}
-				}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' },
+				},
+				'glow': {
+					'0%, 100%': { opacity: 0.7 },
+					'50%': { opacity: 1 },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite',
+				'glow': 'glow 3s ease-in-out infinite',
+			},
+			backgroundImage: {
+				'hero-pattern': 'radial-gradient(circle at 50% 50%, rgba(155, 135, 245, 0.15) 0%, rgba(29, 32, 43, 0.2) 50%, rgba(26, 31, 44, 0) 100%)',
+				'feature-gradient': 'linear-gradient(to bottom right, rgba(155, 135, 245, 0.1), rgba(29, 32, 43, 0))',
+			},
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
