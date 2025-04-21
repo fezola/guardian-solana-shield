@@ -15,7 +15,7 @@ const Header = () => {
       <div className="container flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
           <Shield className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold gradient-text">GuardianLayer</span>
+          <span className="text-xl font-bold gradient-text">GuardLayer</span>
         </Link>
         {/* Mobile menu button */}
         <button className="md:hidden text-foreground" onClick={toggleMenu}>
