@@ -5,6 +5,7 @@ import DevToolsSection from "@/components/DevToolsSection";
 import ReactComponentsSection from "@/components/ReactComponentsSection";
 import IntegrationSection from "@/components/IntegrationSection";
 import DocumentationSection from "@/components/DocumentationSection";
+import TransactionFlowSection from "@/components/TransactionFlowSection";
 
 const DeveloperTools = () => {
   return (
@@ -12,6 +13,7 @@ const DeveloperTools = () => {
       <Header />
       <main>
         <DevToolsSection />
+        <TransactionFlowSection />
         <ReactComponentsSection />
         <IntegrationSection />
         <DocumentationSection />
