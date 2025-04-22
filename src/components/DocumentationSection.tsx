@@ -23,7 +23,7 @@ const DemoAppSection = () => {
       const simulatedRisk = risks[Math.floor(Math.random() * risks.length)];
       setRisk(simulatedRisk);
       setIsSimulating(false);
-      
+
       if (simulatedRisk === 'high') {
         setRequiresBiometric(true);
         setNeedsOtp(true);
@@ -110,18 +110,16 @@ const DemoAppSection = () => {
 
           {risk && !isSecure && (
             <div className="space-y-4">
-              <div className={`p-4 border rounded-md ${
-                risk === 'high' ? 'bg-red-500/10 border-red-500/30' :
-                risk === 'medium' ? 'bg-amber-500/10 border-amber-500/30' :
-                'bg-green-500/10 border-green-500/30'
-              }`}>
+              <div className={`p-4 border rounded-md ${risk === 'high' ? 'bg-red-500/10 border-red-500/30' :
+                  risk === 'medium' ? 'bg-amber-500/10 border-amber-500/30' :
+                    'bg-green-500/10 border-green-500/30'
+                }`}>
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-semibold">Risk Analysis Results</h4>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    risk === 'high' ? 'bg-red-500 text-white' :
-                    risk === 'medium' ? 'bg-amber-500 text-white' :
-                    'bg-green-500 text-white'
-                  }`}>
+                  <span className={`px-2 py-1 rounded-full text-xs ${risk === 'high' ? 'bg-red-500 text-white' :
+                      risk === 'medium' ? 'bg-amber-500 text-white' :
+                        'bg-green-500 text-white'
+                    }`}>
                     {risk.toUpperCase()} RISK
                   </span>
                 </div>
@@ -206,15 +204,15 @@ const DemoAppSection = () => {
         </ol>
         <div className="mt-4 p-4 bg-muted/30 rounded-md">
           <h4 className="font-semibold mb-2 text-sm">Implementation Example:</h4>
-          <CodeBlock 
+          <CodeBlock
             code={`// This is how the demo is implemented in your app
 const securedTx = await guardian.secureTransaction(tx, {
   simulate: true,            // Run simulation first
   biometric: riskLevel > 1,  // For medium/high risk
   otp: riskLevel > 2,        // For high risk only
   emailAddress: user.email
-});`} 
-            language="javascript" 
+});`}
+            language="javascript"
           />
         </div>
       </div>
@@ -485,94 +483,94 @@ const sections = [
       <div>
         <h3 className="text-lg font-bold mb-4">Core API Functions</h3>
         <p className="mb-4">The GuardianLayer SDK provides a comprehensive API for securing transactions and managing user authentication:</p>
-        
+
         <Tabs defaultValue="javascript">
           <TabsList className="mb-4">
             <TabsTrigger value="javascript">JavaScript</TabsTrigger>
             <TabsTrigger value="python">Python</TabsTrigger>
             <TabsTrigger value="rust">Rust</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="javascript">
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Installation</h4>
                 <CodeBlock code={codeExamples.javascript.installation} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Initialization</h4>
                 <CodeBlock code={codeExamples.javascript.initialization} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Transaction Risk Assessment</h4>
                 <CodeBlock code={codeExamples.javascript.simulateAndCheck} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Biometric Authentication</h4>
                 <CodeBlock code={codeExamples.javascript.biometricAuth} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Complete Implementation</h4>
                 <CodeBlock code={codeExamples.javascript.fullImplementation} />
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="python">
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Installation</h4>
                 <CodeBlock code={codeExamples.python.installation} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Initialization</h4>
                 <CodeBlock code={codeExamples.python.initialization} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Transaction Risk Assessment</h4>
                 <CodeBlock code={codeExamples.python.simulateAndCheck} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Biometric Authentication</h4>
                 <CodeBlock code={codeExamples.python.biometricAuth} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Complete Implementation</h4>
                 <CodeBlock code={codeExamples.python.fullImplementation} />
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="rust">
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Installation</h4>
                 <CodeBlock code={codeExamples.rust.installation} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Initialization</h4>
                 <CodeBlock code={codeExamples.rust.initialization} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Transaction Risk Assessment</h4>
                 <CodeBlock code={codeExamples.rust.simulateAndCheck} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Biometric Authentication</h4>
                 <CodeBlock code={codeExamples.rust.biometricAuth} />
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-2">Complete Implementation</h4>
                 <CodeBlock code={codeExamples.rust.fullImplementation} />
@@ -594,18 +592,18 @@ const sections = [
           <p className="text-muted-foreground mb-4">
             Follow these steps to integrate GuardianLayer security features into your application:
           </p>
-          
+
           <ol className="space-y-4 ml-5 list-decimal">
             <li>
               <h4 className="font-semibold">Install the SDK</h4>
-              <CodeBlock 
-                code={`npm install @guardianlayer/sdk @guardianlayer/react`} 
+              <CodeBlock
+                code={`npm install @guardianlayer/sdk @guardianlayer/react`}
               />
             </li>
-            
+
             <li>
               <h4 className="font-semibold">Initialize the SDK</h4>
-              <CodeBlock 
+              <CodeBlock
                 code={`import { GuardianLayer } from '@guardianlayer/sdk';
 
 // Initialize with your wallet provider
@@ -618,13 +616,13 @@ const guardian = new GuardianLayer({
     'biometric',   // Biometric authentication
     'otp'          // One-time password verification
   ]
-});`} 
+});`}
               />
             </li>
-            
+
             <li>
               <h4 className="font-semibold">Add Transaction Protection</h4>
-              <CodeBlock 
+              <CodeBlock
                 code={`// In your transaction handler:
 async function handleSendTransaction(tx) {
   try {
@@ -647,13 +645,13 @@ async function handleSendTransaction(tx) {
   } catch (error) {
     console.error("Transaction failed:", error);
   }
-}`} 
+}`}
               />
             </li>
-            
+
             <li>
               <h4 className="font-semibold">For React Applications</h4>
-              <CodeBlock 
+              <CodeBlock
                 code={`import { GuardianProvider, SecureButton } from '@guardianlayer/react';
 
 function App() {
@@ -683,13 +681,13 @@ function SendButton() {
       Send Securely
     </SecureButton>
   );
-}`} 
+}`}
               />
             </li>
-            
+
             <li>
               <h4 className="font-semibold">Configure Recovery Options</h4>
-              <CodeBlock 
+              <CodeBlock
                 code={`// Set up wallet recovery methods
 await guardian.setupRecovery({
   method: 'shamir', // 'shamir', 'timelock', 'guardians'
@@ -700,12 +698,12 @@ await guardian.setupRecovery({
     'backup2@example.com',
     'backup3@example.com'
   ]
-});`} 
+});`}
               />
             </li>
           </ol>
         </div>
-        
+
         <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
           <h4 className="font-semibold flex items-center mb-2">
             <AlertTriangle className="h-5 w-5 mr-2 text-primary" />
@@ -731,14 +729,14 @@ await guardian.setupRecovery({
         <p className="mb-4">
           GuardianLayer uses zkSNARK circuits for privacy-preserving identity and biometric/credential proofs. Common circuits supported:
         </p>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-bold mb-2">Biometric Template Verification</h3>
             <p className="text-muted-foreground mb-4">
               Verify biometric data like fingerprints without exposing the actual biometric data:
             </p>
-            <CodeBlock 
+            <CodeBlock
               code={`// Generate a biometric commitment
 const biometricTemplate = await guardian.generateBiometricTemplate();
               
@@ -749,16 +747,16 @@ const proof = await guardian.createBiometricProof({
 });
 
 // Send only the proof to the server for verification
-const verified = await guardian.verifyBiometricProof(proof);`} 
+const verified = await guardian.verifyBiometricProof(proof);`}
             />
           </div>
-          
+
           <div>
             <h3 className="text-lg font-bold mb-2">Email Ownership Proof</h3>
             <p className="text-muted-foreground mb-4">
               Prove you own an email address without revealing the actual address:
             </p>
-            <CodeBlock 
+            <CodeBlock
               code={`// Create a hash of the email with a salt
 const emailHash = await guardian.hashCredential({
   type: 'email',
@@ -774,16 +772,16 @@ const proof = await guardian.generateZkProof({
 });
 
 // The verifier can check the proof without seeing the email
-const isValid = await verifier.verifyEmailProof(proof);`} 
+const isValid = await verifier.verifyEmailProof(proof);`}
             />
           </div>
-          
+
           <div>
             <h3 className="text-lg font-bold mb-2">Device Fingerprinting Circuit</h3>
             <p className="text-muted-foreground mb-4">
               Create a privacy-preserving device identification system:
             </p>
-            <CodeBlock 
+            <CodeBlock
               code={`// Generate a device fingerprint
 const deviceFingerprint = await guardian.generateDeviceFingerprint();
 
@@ -795,10 +793,10 @@ const proof = await guardian.createDeviceProof({
 });
 
 // Verify it's a recognized device without exposing device details
-const isKnownDevice = await verifier.verifyDeviceProof(proof);`} 
+const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
             />
           </div>
-          
+
           <div className="p-4 rounded-lg bg-muted border border-border">
             <h4 className="font-semibold mb-2">Technical Deep Dive</h4>
             <p className="text-sm mb-3">
@@ -830,7 +828,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
         <p className="mb-4">
           GuardianLayer applies a multi-layer approach to secure transactions and wallet operations:
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
@@ -842,7 +840,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               Uses a combination of on-chain simulation and pattern recognition.
             </p>
           </div>
-          
+
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <Fingerprint className="h-5 w-5 mr-2 text-blue-500" />
@@ -853,18 +851,18 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               without storing actual biometric data.
             </p>
           </div>
-          
+
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <Key className="h-5 w-5 mr-2 text-purple-500" />
               <h3 className="font-semibold">PIN/Passphrase</h3>
             </div>
             <p className="text-sm">
-              Optional secondary factor using user-memorized PIN or passphrase. Client-side hashing ensures the 
+              Optional secondary factor using user-memorized PIN or passphrase. Client-side hashing ensures the
               PIN/passphrase is never transmitted in plaintext.
             </p>
           </div>
-          
+
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <Database className="h-5 w-5 mr-2 text-indigo-500" />
@@ -876,13 +874,13 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
             </p>
           </div>
         </div>
-        
+
         <div className="mb-6">
           <h3 className="text-lg font-bold mb-3">Security Levels and Risk Adaptation</h3>
           <p className="text-muted-foreground mb-4">
             GuardianLayer adjusts security requirements based on transaction risk assessment:
           </p>
-          
+
           <div className="space-y-3">
             <div className="flex items-center">
               <div className="w-20 text-green-500 font-medium">Low Risk</div>
@@ -891,7 +889,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               </div>
               <div className="w-36 text-sm ml-3">Basic checks only</div>
             </div>
-            
+
             <div className="flex items-center">
               <div className="w-20 text-amber-500 font-medium">Medium Risk</div>
               <div className="flex-1 bg-gray-200 h-2 rounded-full">
@@ -899,7 +897,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               </div>
               <div className="w-36 text-sm ml-3">+Biometric verification</div>
             </div>
-            
+
             <div className="flex items-center">
               <div className="w-20 text-red-500 font-medium">High Risk</div>
               <div className="flex-1 bg-gray-200 h-2 rounded-full">
@@ -909,7 +907,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
             </div>
           </div>
         </div>
-        
+
         <div className="p-4 rounded-lg border border-primary/20 bg-primary/5">
           <h4 className="font-semibold mb-2">Security Certification</h4>
           <p className="text-sm">
@@ -937,14 +935,14 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
     content: (
       <div>
         <h3 className="text-lg font-bold mb-4">Wallet Recovery Options</h3>
-        
+
         <div className="space-y-6">
           <div>
             <h4 className="font-semibold mb-2">Shamir Secret Sharing</h4>
             <p className="text-muted-foreground mb-3">
               Split your wallet recovery key into multiple shares, requiring a threshold number to recover:
             </p>
-            <CodeBlock 
+            <CodeBlock
               code={`// Generate recovery shares
 const recovery = await guardian.setupRecovery({
   method: 'shamir',
@@ -962,16 +960,16 @@ const recovery = await guardian.setupRecovery({
 const wallet = await guardian.recoverWallet({
   method: 'shamir',
   shares: [share1, share2] // The collected shares
-});`} 
+});`}
             />
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-2">Time-locked Recovery</h4>
             <p className="text-muted-foreground mb-3">
               Set up a backup key that can only be used after a security delay window:
             </p>
-            <CodeBlock 
+            <CodeBlock
               code={`// Set up time-locked recovery
 await guardian.setupRecovery({
   method: 'timelock',
@@ -990,16 +988,16 @@ const wallet = await guardian.completeRecovery({
   method: 'timelock',
   backupKey: yourBackupKey,
   recoveryId: recoveryId // From initiateRecovery
-});`} 
+});`}
             />
           </div>
-          
+
           <div>
             <h4 className="font-semibold mb-2">Social Recovery (Guardians)</h4>
             <p className="text-muted-foreground mb-3">
               Designate trusted contacts as guardians who can help recover your wallet:
             </p>
-            <CodeBlock 
+            <CodeBlock
               code={`// Set up social recovery with guardians
 await guardian.setupRecovery({
   method: 'guardians',
@@ -1024,11 +1022,11 @@ const recoveryId = await guardian.initiateRecovery({
 const wallet = await guardian.completeRecovery({
   method: 'guardians',
   recoveryId: recoveryId
-});`} 
+});`}
             />
           </div>
         </div>
-        
+
         <div className="mt-6 p-4 rounded-lg bg-muted/20 border border-border">
           <h4 className="font-semibold mb-3">Recovery Best Practices</h4>
           <ul className="list-disc ml-5 space-y-2">
@@ -1061,7 +1059,7 @@ const wallet = await guardian.completeRecovery({
 ];
 
 const DocumentationSection = () => {
-  const docRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
+  const docRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [activeSection, setActiveSection] = useState(sections[0].id);
 
   // For smooth scroll to section
@@ -1088,11 +1086,10 @@ const DocumentationSection = () => {
                 <button
                   key={section.id}
                   onClick={() => scrollToSection(section.id)}
-                  className={`px-4 py-2.5 rounded-lg w-full text-left flex items-center transition ${
-                    activeSection === section.id 
-                      ? "bg-primary/10 text-primary font-medium" 
+                  className={`px-4 py-2.5 rounded-lg w-full text-left flex items-center transition ${activeSection === section.id
+                      ? "bg-primary/10 text-primary font-medium"
                       : "hover:bg-muted"
-                  }`}
+                    }`}
                 >
                   <section.icon className="h-5 w-5 mr-2.5" />
                   <span>{section.title}</span>
