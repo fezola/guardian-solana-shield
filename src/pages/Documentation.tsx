@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import DocumentationSection from "@/components/DocumentationSection";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DocumentationSidebar from "@/components/DocumentationSidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Documentation = () => {
   return (
@@ -13,7 +14,7 @@ const Documentation = () => {
         <DocumentationSidebar />
         <div className="flex-1">
           <Header />
-          <main className="container py-8">
+          <main className="pt-20 container">
             <DocumentationSection />
           </main>
           <Footer />
