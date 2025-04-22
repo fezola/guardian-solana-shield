@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -92,4 +93,42 @@
   .prose pre code {
     @apply whitespace-pre-wrap break-words;
   }
+  
+  /* Mobile documentation styles */
+  .doc-container {
+    @apply px-4;
+  }
+  
+  .doc-code-block {
+    @apply text-xs max-w-full overflow-x-auto;
+  }
+}
+
+/* Documentation styles */
+.doc-section {
+  @apply mb-12;
+}
+
+.doc-heading {
+  @apply text-xl font-bold mb-4;
+}
+
+.doc-subheading {
+  @apply text-lg font-semibold mb-3;
+}
+
+.doc-paragraph {
+  @apply text-muted-foreground mb-4;
+}
+
+.doc-code {
+  @apply bg-muted p-4 rounded-md overflow-x-auto text-sm my-4;
+}
+
+.doc-list {
+  @apply list-disc ml-5 space-y-2 mb-4;
+}
+
+.doc-note {
+  @apply p-4 rounded-lg bg-primary/10 border border-primary/20 my-4;
 }
