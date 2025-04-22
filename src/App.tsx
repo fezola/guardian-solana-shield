@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Documentation from "./pages/Documentation";
 import DeveloperTools from "./pages/DeveloperTools";
 import NotFound from "./pages/NotFound";
+import UserProfile from "./pages/UserProfile";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/documentation" element={<Documentation />} />
           <Route path="/developer-tools" element={<DeveloperTools />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
