@@ -88,13 +88,12 @@ const Header = () => {
           >
             Integration
           </button>
-          <Button 
-            variant="outline" 
-            className="ml-2"
-            onClick={() => handleAnchorClick('documentation')}
+          <Link 
+            to="/documentation" 
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors ml-2"
           >
             Documentation
-          </Button>
+          </Link>
           <Button
             className="button-glow"
             onClick={handleGetStarted}
@@ -125,13 +124,12 @@ const Header = () => {
               >
                 Integration
               </button>
-              <Button 
-                variant="outline" 
-                className="w-full" 
-                onClick={() => handleAnchorClick('documentation')}
+              <Link 
+                to="/documentation" 
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
               >
                 Documentation
-              </Button>
+              </Link>
               <Button
                 className="w-full button-glow"
                 onClick={handleGetStarted}
