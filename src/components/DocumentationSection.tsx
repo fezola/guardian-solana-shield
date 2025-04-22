@@ -905,20 +905,27 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               <div className="flex-1 bg-gray-200 h-2 rounded-full">
                 <div className="bg-red-500 h-2 rounded-full" style={{ width: '100%' }}></div>
               </div>
-              <div className="w-36 text-sm ml-3">+OTP verification</div>
+              <div className="w-36 text-sm ml-3">+Biometric, PIN & OTP</div>
             </div>
           </div>
         </div>
         
-        <div className="p-4 bg-muted/20 border border-border rounded-lg">
-          <h3 className="text-lg font-semibold mb-3">Security Recommendations</h3>
-          <ul className="list-disc ml-5 space-y-2 text-sm">
-            <li>Enable at least two security factors for all significant transactions</li>
-            <li>Use hardware wallet integration when available for highest security</li>
-            <li>Configure risk thresholds appropriate to your application's needs</li>
-            <li>Add customized security checks for your specific use cases</li>
-            <li>Implement regular security audits of your implementation</li>
+        <div className="p-4 rounded-lg border border-primary/20 bg-primary/5">
+          <h4 className="font-semibold mb-2">Security Certification</h4>
+          <p className="text-sm">
+            GuardianLayer has undergone rigorous third-party security audits by leading blockchain security firms.
+            Our protocols have been tested for resistance against common attack vectors including:
+          </p>
+          <ul className="list-disc ml-5 mt-2 text-sm space-y-1">
+            <li>Man-in-the-middle attacks</li>
+            <li>Replay attacks</li>
+            <li>Social engineering</li>
+            <li>Phishing attempts</li>
+            <li>Cryptographic vulnerabilities</li>
           </ul>
+          <div className="mt-3 text-sm">
+            <a href="#" className="text-primary hover:underline">View Security Audit Reports →</a>
+          </div>
         </div>
       </div>
     ),
@@ -930,131 +937,117 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
     content: (
       <div>
         <h3 className="text-lg font-bold mb-4">Wallet Recovery Options</h3>
-        <p className="text-muted-foreground mb-6">
-          GuardianLayer provides multiple wallet recovery mechanisms to ensure users never lose access to their assets:
-        </p>
         
         <div className="space-y-6">
-          <div className="border border-border rounded-lg overflow-hidden">
-            <div className="bg-muted p-4">
-              <h4 className="font-semibold">Shamir Secret Sharing</h4>
-            </div>
-            <div className="p-4">
-              <p className="text-sm mb-4">
-                Split your wallet seed into multiple shares, requiring a threshold number to recover access.
-              </p>
-              <CodeBlock 
-                code={`// Generate Shamir shares for recovery
-await guardian.setupRecovery({
+          <div>
+            <h4 className="font-semibold mb-2">Shamir Secret Sharing</h4>
+            <p className="text-muted-foreground mb-3">
+              Split your wallet recovery key into multiple shares, requiring a threshold number to recover:
+            </p>
+            <CodeBlock 
+              code={`// Generate recovery shares
+const recovery = await guardian.setupRecovery({
   method: 'shamir',
-  threshold: 2,      // Require 2 shares to recover
-  shares: 3,         // Generate 3 total shares
-  shareDestinations: [
-    { type: 'email', value: 'backup1@example.com' },
-    { type: 'email', value: 'backup2@example.com' },
-    { type: 'device', value: 'local' }           // Store on current device
+  threshold: 2,  // Number of shares needed for recovery
+  shares: 3,     // Total number of shares
+  // Optional: where to deliver the shares
+  delivery: [
+    { type: 'email', destination: 'backup1@example.com' },
+    { type: 'email', destination: 'backup2@example.com' },
+    { type: 'download', destination: 'local' } // Save locally
   ]
 });
 
-// Later, to recover your wallet:
-const walletSeed = await guardian.recoverWallet({
+// To recover with 2 or more shares later:
+const wallet = await guardian.recoverWallet({
   method: 'shamir',
-  shares: [share1, share2]  // Only 2 of the 3 shares needed
+  shares: [share1, share2] // The collected shares
 });`} 
-              />
-            </div>
+            />
           </div>
           
-          <div className="border border-border rounded-lg overflow-hidden">
-            <div className="bg-muted p-4">
-              <h4 className="font-semibold">Social Recovery</h4>
-            </div>
-            <div className="p-4">
-              <p className="text-sm mb-4">
-                Designate trusted guardians who can collectively help recover your wallet.
-              </p>
-              <CodeBlock 
-                code={`// Setup social recovery with guardians
+          <div>
+            <h4 className="font-semibold mb-2">Time-locked Recovery</h4>
+            <p className="text-muted-foreground mb-3">
+              Set up a backup key that can only be used after a security delay window:
+            </p>
+            <CodeBlock 
+              code={`// Set up time-locked recovery
+await guardian.setupRecovery({
+  method: 'timelock',
+  waitPeriod: 7 * 24 * 60 * 60, // 7 days in seconds
+  notificationEmail: 'your@email.com', // For recovery attempt alerts
+});
+
+// Start recovery process (initiates waiting period)
+await guardian.initiateRecovery({
+  method: 'timelock',
+  backupKey: yourBackupKey
+});
+
+// After wait period expires:
+const wallet = await guardian.completeRecovery({
+  method: 'timelock',
+  backupKey: yourBackupKey,
+  recoveryId: recoveryId // From initiateRecovery
+});`} 
+            />
+          </div>
+          
+          <div>
+            <h4 className="font-semibold mb-2">Social Recovery (Guardians)</h4>
+            <p className="text-muted-foreground mb-3">
+              Designate trusted contacts as guardians who can help recover your wallet:
+            </p>
+            <CodeBlock 
+              code={`// Set up social recovery with guardians
 await guardian.setupRecovery({
   method: 'guardians',
-  threshold: 3,      // Require 3 guardians to approve
+  threshold: 3, // Number of guardians required
   guardians: [
     { email: 'guardian1@example.com', name: 'Alice' },
     { email: 'guardian2@example.com', name: 'Bob' },
-    { email: 'guardian3@example.com', name: 'Carol' },
+    { email: 'guardian3@example.com', name: 'Charlie' },
     { email: 'guardian4@example.com', name: 'Dave' },
     { email: 'guardian5@example.com', name: 'Eve' }
-  ],
-  recoveryWindow: '7d'  // Guardians have 7 days to respond
-});
-
-// To initiate recovery:
-const recoveryId = await guardian.initiateRecovery({
-  method: 'guardians',
-  userId: 'your-user-id',
-  newDevice: true
-});
-
-// Recovery completes when threshold of guardians approve`} 
-              />
-            </div>
-          </div>
-          
-          <div className="border border-border rounded-lg overflow-hidden">
-            <div className="bg-muted p-4">
-              <h4 className="font-semibold">Time-Locked Recovery</h4>
-            </div>
-            <div className="p-4">
-              <p className="text-sm mb-4">
-                Set up a time-locked recovery that activates after a specified waiting period.
-              </p>
-              <CodeBlock 
-                code={`// Configure time-locked recovery
-await guardian.setupRecovery({
-  method: 'timelock',
-  waitPeriod: '30d',      // 30 day waiting period
-  notificationEmail: 'your-email@example.com',
-  cancelWithinHours: 24,  // Can cancel within 24 hours of request
-  securityQuestions: [    // Optional additional verification
-    {
-      question: 'What was your first pet's name?',
-      answer: 'hashedAnswerValue'  // Client-side hashed
-    },
-    {
-      question: 'City you were born in?',
-      answer: 'hashedAnswerValue'
-    }
   ]
 });
 
-// To initiate time-locked recovery:
-await guardian.initiateRecovery({
-  method: 'timelock',
-  userId: 'your-user-id'
+// To recover (will email verification requests to guardians):
+const recoveryId = await guardian.initiateRecovery({
+  method: 'guardians',
+  userEmail: 'your@email.com'
 });
 
-// After wait period, complete recovery
-const walletSeed = await guardian.completeRecovery({
-  recoveryId: 'recovery-request-id',
-  securityAnswers: ['answer1', 'answer2']
+// Guardians approve via links in their emails
+// Once threshold is met, complete recovery:
+const wallet = await guardian.completeRecovery({
+  method: 'guardians',
+  recoveryId: recoveryId
 });`} 
-              />
-            </div>
+            />
           </div>
-          
-          <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-            <h4 className="font-semibold flex items-center mb-3">
-              <AlertTriangle className="h-5 w-5 mr-2 text-primary" />
-              Best Practices for Recovery
-            </h4>
-            <ul className="list-disc ml-5 space-y-1 text-sm">
-              <li>Always set up at least two different recovery methods</li>
-              <li>Store recovery shares in different physical locations</li>
-              <li>Choose guardians who are reliable and security-conscious</li>
-              <li>Regularly verify that your recovery methods still work</li>
-              <li>For social recovery, choose guardians who don't know each other</li>
-            </ul>
-          </div>
+        </div>
+        
+        <div className="mt-6 p-4 rounded-lg bg-muted/20 border border-border">
+          <h4 className="font-semibold mb-3">Recovery Best Practices</h4>
+          <ul className="list-disc ml-5 space-y-2">
+            <li>
+              <strong>Combine methods:</strong> Use multiple recovery methods for added security
+            </li>
+            <li>
+              <strong>Test recovery:</strong> Regularly test your recovery process in a safe environment
+            </li>
+            <li>
+              <strong>Update guardians:</strong> Periodically review and update your guardian list
+            </li>
+            <li>
+              <strong>Secure your backup:</strong> Store recovery shares in different physical locations
+            </li>
+            <li>
+              <strong>Use reliable guardians:</strong> Choose guardians who are security-conscious and reachable
+            </li>
+          </ul>
         </div>
       </div>
     ),
@@ -1063,30 +1056,75 @@ const walletSeed = await guardian.completeRecovery({
     icon: Key,
     title: "API Key Management",
     id: "api-key",
-    content: <ApiKeySection />,
+    content: <ApiKeySection />
   },
 ];
 
 const DocumentationSection = () => {
+  const docRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
   const [activeSection, setActiveSection] = useState(sections[0].id);
 
-  const currentSection = sections.find((section) => section.id === activeSection);
+  // For smooth scroll to section
+  const scrollToSection = (id: string) => {
+    docRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setActiveSection(id);
+  };
 
   return (
-    <div className="pb-20">
-      <h2 className="text-2xl md:text-3xl font-bold mb-8">Documentation</h2>
-      
-      {currentSection && (
-        <div>
-          <div className="flex items-center mb-6">
-            <currentSection.icon className="h-5 w-5 mr-2" />
-            <h3 className="text-xl font-bold">{currentSection.title}</h3>
-          </div>
-          
-          <div>{currentSection.content}</div>
+    <section id="documentation" className="py-24">
+      <div className="container">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4 gradient-text animate-fade-in">Documentation</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto animate-fade-in">
+            Comprehensive guides, tutorials, and technical references for integrating GuardianLayer security features.
+          </p>
         </div>
-      )}
-    </div>
+
+        <div className="flex flex-col lg:flex-row gap-10">
+          {/* Sidebar navigation */}
+          <div className="lg:w-64 shrink-0">
+            <div className="sticky top-24 space-y-1">
+              {sections.map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`px-4 py-2.5 rounded-lg w-full text-left flex items-center transition ${
+                    activeSection === section.id 
+                      ? "bg-primary/10 text-primary font-medium" 
+                      : "hover:bg-muted"
+                  }`}
+                >
+                  <section.icon className="h-5 w-5 mr-2.5" />
+                  <span>{section.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Content area */}
+          <div className="flex-1">
+            <div className="space-y-16">
+              {sections.map((section) => (
+                <div
+                  ref={el => (docRefs.current[section.id] = el)}
+                  key={section.id}
+                  id={section.id}
+                  className="scroll-mt-24"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="inline-flex p-2.5 rounded-lg bg-primary/10">
+                      <section.icon className="h-5 w-5 text-primary" />
+                    </span>
+                    <h2 className="text-2xl font-bold">{section.title}</h2>
+                  </div>
+                  <div>{section.content}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

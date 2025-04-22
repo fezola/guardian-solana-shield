@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const sidebarItems = [
   { title: "API Reference", icon: FileText, href: "#api-reference" },
@@ -23,33 +22,28 @@ const sidebarItems = [
 ];
 
 const DocumentationSidebar = () => {
-  const isMobile = useIsMobile();
-  
-  if (isMobile) {
-    return null; // Don't render the sidebar on mobile
-  }
-  
   return (
-    <div className="h-full w-64 border-r border-border/50 bg-sidebar">
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-4">Documentation</h2>
-        <nav>
-          <ul className="space-y-2">
-            {sidebarItems.map((item) => (
-              <li key={item.title}>
-                <a 
-                  href={item.href} 
-                  className="flex items-center gap-2 py-2 px-3 rounded-md hover:bg-muted transition-colors"
-                >
-                  <item.icon className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{item.title}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </div>
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Documentation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {sidebarItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.href}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 };
 
