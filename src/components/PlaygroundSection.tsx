@@ -1,3 +1,9 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   AlertTriangle, 
   CheckCircle, 
@@ -7,6 +13,8 @@ import {
   Key,
   Clock
 } from "lucide-react";
+import CodeBlock from "./CodeBlock";
+import { Badge } from "@/components/ui/badge";
 
 const PlaygroundSection = () => {
   const [activeTab, setActiveTab] = useState("transaction-security");
@@ -445,7 +453,7 @@ async function secureSendTransaction(tx) {
                             <div className="font-medium text-sm mb-1">Permissions:</div>
                             <div className="flex flex-wrap gap-1">
                               {apiKeyTestResult.permissions.map((perm, idx) => (
-                                <Badge key={idx} variant="outline">
+                                <Badge key={idx}>
                                   {perm}
                                 </Badge>
                               ))}
@@ -495,7 +503,7 @@ async function secureSendTransaction(tx) {
                             <div className="font-medium text-sm mb-1">Allowed Operations:</div>
                             <div className="flex flex-wrap gap-1">
                               {apiKeyTestResult.allowedOperations.map((op, idx) => (
-                                <Badge key={idx} variant="outline" className="bg-green-500/10">
+                                <Badge key={idx} className="bg-green-500/10">
                                   {op}
                                 </Badge>
                               ))}
@@ -505,7 +513,7 @@ async function secureSendTransaction(tx) {
                             <div className="font-medium text-sm mb-1">Denied Operations:</div>
                             <div className="flex flex-wrap gap-1">
                               {apiKeyTestResult.deniedOperations.map((op, idx) => (
-                                <Badge key={idx} variant="outline" className="bg-red-500/10">
+                                <Badge key={idx} className="bg-red-500/10">
                                   {op}
                                 </Badge>
                               ))}
@@ -539,5 +547,4 @@ async function secureSendTransaction(tx) {
   );
 };
 
-import { Clock, Badge } from "lucide-react";
 export default PlaygroundSection;
