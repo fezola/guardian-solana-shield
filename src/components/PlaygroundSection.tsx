@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AlertTriangle, CheckCircle, Shield, XCircle, Fingerprint, Key } from "lucide-react";
-import CodeBlock from "./CodeBlock";
+import { 
+  AlertTriangle, 
+  CheckCircle, 
+  Shield, 
+  XCircle, 
+  Fingerprint, 
+  Key,
+  Clock
+} from "lucide-react";
 
 const PlaygroundSection = () => {
   const [activeTab, setActiveTab] = useState("transaction-security");
