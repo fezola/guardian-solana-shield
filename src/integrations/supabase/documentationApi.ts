@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Fetch documentation sections ordered by order_index
@@ -8,7 +7,13 @@ export async function fetchDocumentationSections() {
     .select("id,title,icon,content,order_index,last_updated_by,slug,updated_at")
     .order("order_index", { ascending: true });
   if (error) throw error;
-  return data;
+  
+  // Transform the content field if needed
+  return data.map(section => ({
+    ...section,
+    // Convert content to string if it's not already
+    content: section.content
+  }));
 }
 
 // Fetch code examples for a section

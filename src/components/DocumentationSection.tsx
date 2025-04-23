@@ -750,17 +750,29 @@ const DocumentationSection = () => {
   const isMobile = useIsMobile();
   const { data: dbSections, isLoading, error } = useDocumentationSections();
 
-  const sections = dbSections?.map(dbSection => ({
-    ...dbSection,
-    content: dbSection.content, // You may need to deserialize if content is stored as JSON
-    icon: (() => {
-      // Map icon string to imported icon component, fallback to FileText
-      const allIcons = {Book, FileText, Code, FileCode, Shield, Settings, Copy, Terminal, Database, Key, Fingerprint, AlertTriangle, User, LayoutDashboard, AppWindow, Lock};
-      // @ts-ignore
+  const sections = dbSections?.map(dbSection => {
+    const IconComponent = (() => {
+      const allIcons = {
+        Book, FileText, Code, FileCode, Shield, Settings, Copy, 
+        Terminal, Database, Key, Fingerprint, AlertTriangle, 
+        User, LayoutDashboard, AppWindow, Lock
+      };
       return allIcons[dbSection.icon] || FileText;
-    })(),
-    lastUpdated: dbSection.updated_at ? dbSection.updated_at.split("T")[0] : "",
-  })) || [];
+    })();
+
+    return {
+      ...dbSection,
+      content: (
+        <div className="prose dark:prose-invert max-w-none">
+          {typeof dbSection.content === 'string' 
+            ? dbSection.content 
+            : JSON.stringify(dbSection.content)}
+        </div>
+      ),
+      icon: IconComponent,
+      lastUpdated: dbSection.updated_at ? dbSection.updated_at.split("T")[0] : "",
+    };
+  }) || [];
 
   const scrollToSection = (id: string) => {
     docRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -877,4 +889,5 @@ const DocumentationSection = () => {
     </section>
   );
 };
+
 export default DocumentationSection;
