@@ -1,5 +1,5 @@
 import { Book, FileText, Code, FileCode, Shield, Settings, Copy, Terminal, Database, Key, Fingerprint, AlertTriangle, User, LayoutDashboard, AppWindow, Lock } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import CodeBlock from "./CodeBlock";
@@ -8,6 +8,12 @@ import SdkIntegrationSection from "./SdkIntegrationSection";
 import PlaygroundSection from "./PlaygroundSection";
 import ServerSideApiSection from "./ServerSideApiSection";
 import DemoAppSection from "./DemoAppSection";
+import DocumentationSearch from "./DocumentationSearch";
+import AnchorLink from "./AnchorLink";
+import FeedbackWidget from "./FeedbackWidget";
+import UpdatedTimestamp from "./UpdatedTimestamp";
+import CollapsibleSidebar from "./CollapsibleSidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const codeExamples = {
   javascript: {
@@ -59,10 +65,13 @@ async function secureAndSendTransaction(tx) {
     // 1. Simulate and check risk
     const risk = await guardian.simulateAndCheck(tx);
     
-    if (risk.level === 'high') {
-      // 2. Get user confirmation for risky tx
-      const confirmed = await guardian.promptUserWarning(risk);
-      if (!confirmed) return;
+    if (risk.level !== 'safe') {
+      // Show risk warning to user
+      const userConfirmed = await guardian.promptUserWarning(risk);
+      
+      if (!userConfirmed) {
+        return; // Transaction canceled by user
+      }
       
       // 3. Require biometric for high risk
       const biometricVerified = await guardian.requireBiometric();
@@ -267,6 +276,7 @@ const sections = [
     icon: FileText,
     title: "API Reference",
     id: "api-reference",
+    lastUpdated: "2025-04-15",
     content: (
       <div>
         <h3 className="text-lg font-bold mb-4">Core API Functions</h3>
@@ -373,12 +383,14 @@ const sections = [
     icon: Code,
     title: "Integration Guides",
     id: "integration-guides",
+    lastUpdated: "2025-04-10",
     content: <SdkIntegrationSection />,
   },
   {
     icon: FileCode,
     title: "zkProof Circuit Explanation",
     id: "zkproof-circuits",
+    lastUpdated: "2025-04-18",
     content: (
       <div>
         <p className="mb-4">
@@ -472,12 +484,14 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
     icon: Terminal,
     title: "Demo App",
     id: "demo-app",
+    lastUpdated: "2025-04-20",
     content: <DemoAppSection />,
   },
   {
     icon: Shield,
     title: "Security Model Overview",
     id: "security-model",
+    lastUpdated: "2025-04-12",
     content: (
       <div>
         <p className="mb-4">
@@ -587,6 +601,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
     icon: Settings,
     title: "Recovery Configuration",
     id: "recovery-config",
+    lastUpdated: "2025-04-05",
     content: (
       <div>
         <h3 className="text-lg font-bold mb-4">Wallet Recovery Options</h3>
@@ -709,18 +724,21 @@ const wallet = await guardian.completeRecovery({
     icon: Key,
     title: "API Key Management",
     id: "api-key",
+    lastUpdated: "2025-04-22",
     content: <ApiKeySection />
   },
   {
     icon: Database,
     title: "Server API",
     id: "server-api",
+    lastUpdated: "2025-04-17",
     content: <ServerSideApiSection />
   },
   {
     icon: Terminal,
     title: "Interactive Playground",
     id: "playground",
+    lastUpdated: "2025-04-19",
     content: <PlaygroundSection />
   },
 ];
@@ -728,15 +746,24 @@ const wallet = await guardian.completeRecovery({
 const DocumentationSection = () => {
   const docRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [activeSection, setActiveSection] = useState(sections[0].id);
+  const isMobile = useIsMobile();
 
-  // For smooth scroll to section
   const scrollToSection = (id: string) => {
     docRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
     setActiveSection(id);
+    
+    window.history.pushState(null, "", `#${id}`);
   };
+  
+  useEffect(() => {
+    const sectionId = window.location.hash.replace('#', '');
+    if (sectionId && sections.some(section => section.id === sectionId)) {
+      setTimeout(() => scrollToSection(sectionId), 100);
+    }
+  }, []);
 
   return (
-    <section id="documentation" className="py-24">
+    <section id="documentation" className="py-12 lg:py-24">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4 gradient-text animate-fade-in">Documentation</h2>
@@ -746,26 +773,47 @@ const DocumentationSection = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10">
-          {/* Sidebar navigation */}
-          <div className="lg:w-64 shrink-0">
-            <div className="sticky top-24 space-y-1">
-              {sections.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => scrollToSection(section.id)}
-                  className={`px-4 py-2.5 rounded-lg w-full text-left flex items-center transition ${activeSection === section.id
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "hover:bg-muted"
-                    }`}
-                >
-                  <section.icon className="h-5 w-5 mr-2.5" />
-                  <span>{section.title}</span>
-                </button>
-              ))}
+          {isMobile && (
+            <div className="lg:hidden mb-6">
+              <DocumentationSearch 
+                sections={sections}
+                onSelectSection={scrollToSection}
+              />
             </div>
-          </div>
+          )}
+          
+          <CollapsibleSidebar>
+            <div className="p-4 pt-6">
+              {!isMobile && (
+                <DocumentationSearch 
+                  sections={sections}
+                  onSelectSection={scrollToSection}
+                />
+              )}
+              
+              <h2 className="text-xl font-bold mb-4">Documentation</h2>
+              <nav>
+                <ul className="space-y-2">
+                  {sections.map((section) => (
+                    <li key={section.id}>
+                      <button
+                        onClick={() => scrollToSection(section.id)}
+                        className={`flex w-full items-center gap-2 py-2 px-3 rounded-md hover:bg-muted transition-colors text-left ${
+                          activeSection === section.id
+                            ? "bg-primary/10 text-primary font-medium"
+                            : ""
+                        }`}
+                      >
+                        <section.icon className="h-4 w-4 shrink-0" />
+                        <span className="text-sm">{section.title}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          </CollapsibleSidebar>
 
-          {/* Content area */}
           <div className="flex-1">
             <div className="space-y-16">
               {sections.map((section) => (
@@ -775,13 +823,18 @@ const DocumentationSection = () => {
                   id={section.id}
                   className="scroll-mt-24"
                 >
-                  <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-3 mb-6 group">
                     <span className="inline-flex p-2.5 rounded-lg bg-primary/10">
                       <section.icon className="h-5 w-5 text-primary" />
                     </span>
-                    <h2 className="text-2xl font-bold">{section.title}</h2>
+                    <h2 className="text-2xl font-bold">
+                      {section.title}
+                      <AnchorLink id={section.id} />
+                    </h2>
                   </div>
-                  <div>{section.content}</div>
+                  <UpdatedTimestamp date={section.lastUpdated} />
+                  <div className="mt-6">{section.content}</div>
+                  <FeedbackWidget sectionId={section.id} sectionTitle={section.title} />
                 </div>
               ))}
             </div>
