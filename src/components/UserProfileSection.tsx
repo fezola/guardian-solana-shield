@@ -1,96 +1,101 @@
 import { useState } from "react";
-import { 
-  User, Shield, Key, Settings, Activity, FileText, Code, 
-  Smartphone, Clock, LogOut, UserPlus, Lock, Mail, Building, 
-  AlertTriangle, CheckCircle, X
-} from "lucide-react";
-import { 
-  Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle 
-} from "@/components/ui/card";
+import { User, Settings, Key, Shield, Code, FileCode, Database, Bell, BarChart3, Layers, AlertTriangle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { 
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
-} from "@/components/ui/select";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import CodeBlock from "./CodeBlock";
 
-// Mock user data
-const user = {
-  id: "user-1",
-  name: "Alex Johnson",
-  email: "alex@example.com",
-  avatar: "",
-  organization: "Solana Labs",
-  role: "Developer",
-  isVerified: true,
-  plan: "Developer",
-  createdAt: "2023-01-15T00:00:00Z",
-  lastLogin: "2023-11-15T14:32:45Z",
-  recoveryMethods: [
-    { type: "email", value: "recovery@example.com", isVerified: true },
-    { type: "phone", value: "+1 (555) 123-4567", isVerified: true }
-  ],
-  devices: [
-    { id: "device-1", name: "MacBook Pro", lastActive: "2023-11-15T14:32:45Z", browser: "Chrome", os: "macOS", isCurrent: true },
-    { id: "device-2", name: "iPhone 13", lastActive: "2023-11-14T09:15:22Z", browser: "Safari", os: "iOS", isCurrent: false }
-  ],
-  loginHistory: [
-    { id: "login-1", timestamp: "2023-11-15T14:32:45Z", ip: "192.168.1.1", location: "San Francisco, CA", device: "MacBook Pro", status: "success" },
-    { id: "login-2", timestamp: "2023-11-14T09:15:22Z", ip: "192.168.1.2", location: "San Francisco, CA", device: "iPhone 13", status: "success" },
-    { id: "login-3", timestamp: "2023-11-10T18:45:12Z", ip: "203.0.113.1", location: "New York, NY", device: "Unknown", status: "failed" }
-  ],
-  teamMembers: [
-    { id: "member-1", name: "Alex Johnson", email: "alex@example.com", role: "Admin", avatar: "" },
-    { id: "member-2", name: "Sarah Williams", email: "sarah@example.com", role: "Developer", avatar: "" },
-    { id: "member-3", name: "Michael Brown", email: "michael@example.com", role: "Viewer", avatar: "" }
-  ]
-};
+const UserProfileSection = ({ activeTab = "projects" }) => {
+  // User state
+  const [user, setUser] = useState({
+    name: "Demo User",
+    email: "demo@example.com",
+    avatar: "",
+    plan: "Developer",
+    isVerified: true
+  });
 
-const UserProfileSection = ({ activeTab = "dashboard" }) => {
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [organization, setOrganization] = useState(user.organization);
-  const [role, setRole] = useState(user.role);
-  const [isEditing, setIsEditing] = useState(false);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
-  const [biometricEnabled, setBiometricEnabled] = useState(false);
-  const [autoLogoutEnabled, setAutoLogoutEnabled] = useState(true);
-  const [ipRestrictionEnabled, setIpRestrictionEnabled] = useState(false);
-  const [newTeamMemberEmail, setNewTeamMemberEmail] = useState("");
-  const [newTeamMemberRole, setNewTeamMemberRole] = useState("Viewer");
+  // Projects state
+  const [projects, setProjects] = useState([
+    {
+      id: "proj-1",
+      name: "My Solana dApp",
+      apiKey: "gl_live_xxxxxxxxxxxxxxxxxxxx",
+      environment: "production",
+      created: "2023-10-15",
+      status: "active"
+    },
+    {
+      id: "proj-2",
+      name: "Test Project",
+      apiKey: "gl_test_xxxxxxxxxxxxxxxxxxxx",
+      environment: "development",
+      created: "2023-11-02",
+      status: "active"
+    }
+  ]);
 
-  // Format timestamp
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
+  // New project form state
+  const [newProject, setNewProject] = useState({
+    name: "",
+    environment: "development"
+  });
+
+  // Settings state
+  const [settings, setSettings] = useState({
+    emailNotifications: true,
+    securityAlerts: true,
+    twoFactorAuth: false,
+    apiRateLimit: "standard"
+  });
+
+  // API usage stats (mock data)
+  const usageStats = {
+    totalRequests: 12458,
+    securityChecks: 8932,
+    biometricAuths: 2145,
+    otpVerifications: 1381
   };
 
-  // Handle profile update
-  const handleProfileUpdate = () => {
-    // In a real app, this would send data to an API
-    setIsEditing(false);
-    // Show success message
-  };
-
-  // Handle adding a new team member
-  const handleAddTeamMember = () => {
-    if (!newTeamMemberEmail) return;
+  // Handle new project creation
+  const handleCreateProject = () => {
+    if (!newProject.name) return;
     
-    // In a real app, this would send an invitation via API
-    setNewTeamMemberEmail("");
-    // Show success message
+    const newProj = {
+      id: `proj-${Date.now()}`,
+      name: newProject.name,
+      apiKey: `gl_${newProject.environment === "production" ? "live" : "test"}_${Math.random().toString(36).substring(2, 15)}`,
+      environment: newProject.environment,
+      created: new Date().toISOString().split('T')[0],
+      status: "active"
+    };
+    
+    setProjects([...projects, newProj]);
+    setNewProject({ name: "", environment: "development" });
   };
 
-  // Handle removing a device
-  const handleRemoveDevice = (deviceId) => {
-    // In a real app, this would call an API to remove the device
-    // Show success message
+  // Generate new API key
+  const handleRegenerateKey = (projectId) => {
+    setProjects(projects.map(proj => {
+      if (proj.id === projectId) {
+        return {
+          ...proj,
+          apiKey: `gl_${proj.environment === "production" ? "live" : "test"}_${Math.random().toString(36).substring(2, 15)}`
+        };
+      }
+      return proj;
+    }));
+  };
+
+  // Copy API key to clipboard
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    // You could add a toast notification here
   };
 
   return (
@@ -121,475 +126,343 @@ const UserProfileSection = ({ activeTab = "dashboard" }) => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue={activeTab} value={activeTab} className="w-full">
-        {/* Dashboard Tab Content */}
-        <TabsContent value="dashboard" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>
-                Manage your personal details and organization information
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {isEditing ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input 
-                        id="name" 
-                        value={name} 
-                        onChange={(e) => setName(e.target.value)} 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email Address</Label>
-                      <Input 
-                        id="email" 
-                        value={email} 
-                        onChange={(e) => setEmail(e.target.value)} 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="organization">Organization</Label>
-                      <Input 
-                        id="organization" 
-                        value={organization} 
-                        onChange={(e) => setOrganization(e.target.value)} 
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
-                      <Select value={role} onValueChange={setRole}>
-                        <SelectTrigger id="role">
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Developer">Developer</SelectItem>
-                          <SelectItem value="Project Manager">Project Manager</SelectItem>
-                          <SelectItem value="Designer">Designer</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button variant="outline" onClick={() => setIsEditing(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleProfileUpdate}>
-                      Save Changes
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground mb-1">Full Name</div>
-                      <div>{name}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground mb-1">Email Address</div>
-                      <div>{email}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground mb-1">Organization</div>
-                      <div className="flex items-center">
-                        <Building className="h-4 w-4 mr-2 text-muted-foreground" />
-                        {organization}
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground mb-1">Role</div>
-                      <div>{role}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground mb-1">Member Since</div>
-                      <div>{formatTimestamp(user.createdAt)}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground mb-1">Last Login</div>
-                      <div>{formatTimestamp(user.lastLogin)}</div>
-                    </div>
-                  </div>
-                  <div className="flex justify-end">
-                    <Button variant="outline" onClick={() => setIsEditing(true)}>
-                      Edit Profile
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        <TabsList className="grid grid-cols-4 mb-6">
+          <TabsTrigger value="projects">
+            <Code className="h-4 w-4 mr-2" />
+            Projects
+          </TabsTrigger>
+          <TabsTrigger value="api-keys">
+            <Key className="h-4 w-4 mr-2" />
+            API Keys
+          </TabsTrigger>
+          <TabsTrigger value="usage">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Usage
+          </TabsTrigger>
+          <TabsTrigger value="settings">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </TabsTrigger>
+        </TabsList>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>
-                Manage your account security and authentication methods
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <div className="font-medium">Two-Factor Authentication</div>
-                    <div className="text-sm text-muted-foreground">
-                      Require a verification code when logging in
-                    </div>
-                  </div>
-                  <Switch 
-                    checked={twoFactorEnabled} 
-                    onCheckedChange={setTwoFactorEnabled} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <div className="font-medium">Biometric Authentication</div>
-                    <div className="text-sm text-muted-foreground">
-                      Use fingerprint or face recognition for login
-                    </div>
-                  </div>
-                  <Switch 
-                    checked={biometricEnabled} 
-                    onCheckedChange={setBiometricEnabled} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <div className="font-medium">Auto Logout</div>
-                    <div className="text-sm text-muted-foreground">
-                      Automatically log out after 30 minutes of inactivity
-                    </div>
-                  </div>
-                  <Switch 
-                    checked={autoLogoutEnabled} 
-                    onCheckedChange={setAutoLogoutEnabled} 
-                  />
-                </div>
-                <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <div className="font-medium">IP Restriction</div>
-                    <div className="text-sm text-muted-foreground">
-                      Limit access to specific IP addresses
-                    </div>
-                  </div>
-                  <Switch 
-                    checked={ipRestrictionEnabled} 
-                    onCheckedChange={setIpRestrictionEnabled} 
-                  />
-                </div>
-              </div>
+        {/* Projects Tab */}
+        <TabsContent value="projects" className="space-y-6">
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">Your Projects</h3>
+            <p className="text-muted-foreground mb-6">
+              Manage your GuardianLayer projects and their associated API keys.
+            </p>
 
-              <div className="pt-4">
-                <h3 className="text-lg font-medium mb-2">Recovery Methods</h3>
-                <div className="space-y-3">
-                  {user.recoveryMethods.map((method, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-md">
-                      <div className="flex items-center">
-                        {method.type === "email" ? (
-                          <Mail className="h-5 w-5 mr-3 text-blue-500" />
-                        ) : (
-                          <Smartphone className="h-5 w-5 mr-3 text-green-500" />
-                        )}
-                        <div>
-                          <div className="font-medium capitalize">{method.type}</div>
-                          <div className="text-sm text-muted-foreground">{method.value}</div>
-                        </div>
-                      </div>
-                      <Badge 
-                        variant="outline" 
-                        className={method.isVerified ? 
-                          "bg-green-500/10 text-green-500 border-green-500/20" : 
-                          "bg-amber-500/10 text-amber-500 border-amber-500/20"}
-                      >
-                        {method.isVerified ? "Verified" : "Unverified"}
+            <div className="space-y-4">
+              {projects.map(project => (
+                <Card key={project.id} className="overflow-hidden">
+                  <CardHeader className="bg-muted/30 pb-2">
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-lg">{project.name}</CardTitle>
+                      <Badge variant={project.environment === "production" ? "default" : "outline"}>
+                        {project.environment}
                       </Badge>
                     </div>
-                  ))}
-                  <Button variant="outline" className="w-full">
-                    Add Recovery Method
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Trusted Devices</CardTitle>
-              <CardDescription>
-                Manage devices that have access to your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {user.devices.map((device) => (
-                <div key={device.id} className="flex items-center justify-between p-3 border rounded-md">
-                  <div className="flex items-center">
-                    <Smartphone className="h-5 w-5 mr-3 text-muted-foreground" />
-                    <div>
-                      <div className="font-medium flex items-center">
-                        {device.name}
-                        {device.isCurrent && (
-                          <Badge className="ml-2 bg-blue-500/10 text-blue-500 border-blue-500/20">
-                            Current
-                          </Badge>
-                        )}
+                    <CardDescription>Created on {project.created}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Key className="h-4 w-4 text-muted-foreground" />
+                        <code className="bg-muted px-2 py-1 rounded text-sm font-mono">
+                          {project.apiKey}
+                        </code>
                       </div>
-                      <div className="text-sm text-muted-foreground">
-                        {device.browser} on {device.os} • Last active {formatTimestamp(device.lastActive)}
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => copyToClipboard(project.apiKey)}
+                        >
+                          Copy
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleRegenerateKey(project.id)}
+                        >
+                          Regenerate
+                        </Button>
                       </div>
                     </div>
-                  </div>
-                  {!device.isCurrent && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => handleRemoveDevice(device.id)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
+                  </CardContent>
+                </Card>
               ))}
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Login History</CardTitle>
-              <CardDescription>
-                Recent login activity on your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {user.loginHistory.map((login) => (
-                <div key={login.id} className="flex items-center justify-between p-3 border rounded-md">
-                  <div className="flex items-center">
-                    {login.status === "success" ? (
-                      <CheckCircle className="h-5 w-5 mr-3 text-green-500" />
-                    ) : (
-                      <AlertTriangle className="h-5 w-5 mr-3 text-red-500" />
-                    )}
-                    <div>
-                      <div className="font-medium capitalize">
-                        {login.status === "success" ? "Successful login" : "Failed login attempt"}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {formatTimestamp(login.timestamp)} • {login.device} • {login.location}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        IP: {login.ip}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <Button variant="outline" className="w-full">
-                View Full History
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Members</CardTitle>
-              <CardDescription>
-                Manage team members and their access levels
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <div className="mt-6 p-4 border rounded-md bg-muted/30">
+              <h4 className="font-semibold mb-3">Create New Project</h4>
               <div className="space-y-4">
-                {user.teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center justify-between p-3 border rounded-md">
-                    <div className="flex items-center">
-                      <Avatar className="h-8 w-8 mr-3">
-                        <AvatarImage src={member.avatar} alt={member.name} />
-                        <AvatarFallback className="bg-primary/10 text-primary text-sm">{member.name.charAt(0)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">{member.name}</div>
-                        <div className="text-sm text-muted-foreground">{member.email}</div>
-                      </div>
-                    </div>
-                    <Badge 
-                      variant="outline" 
-                      className={
-                        member.role === "Admin" ? "bg-purple-500/10 text-purple-500 border-purple-500/20" :
-                        member.role === "Developer" ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
-                        "bg-gray-500/10 text-gray-500 border-gray-500/20"
-                      }
-                    >
-                      {member.role}
+                <div>
+                  <Label htmlFor="project-name">Project Name</Label>
+                  <Input 
+                    id="project-name" 
+                    value={newProject.name}
+                    onChange={(e) => setNewProject({...newProject, name: e.target.value})}
+                    placeholder="My Awesome dApp"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="environment">Environment</Label>
+                  <select 
+                    id="environment"
+                    className="w-full p-2 rounded-md border"
+                    value={newProject.environment}
+                    onChange={(e) => setNewProject({...newProject, environment: e.target.value})}
+                  >
+                    <option value="development">Development</option>
+                    <option value="production">Production</option>
+                  </select>
+                </div>
+                <Button onClick={handleCreateProject} disabled={!newProject.name}>
+                  Create Project
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">Implementation Guide</h3>
+            <p className="text-muted-foreground mb-4">
+              Follow these steps to integrate GuardianLayer with your project:
+            </p>
+            
+            <ol className="list-decimal ml-5 space-y-4 mb-6">
+              <li>
+                <h4 className="font-semibold">Install the SDK</h4>
+                <CodeBlock
+                  code={`npm install @guardianlayer/sdk @guardianlayer/react`}
+                  language="bash"
+                />
+              </li>
+              <li>
+                <h4 className="font-semibold">Initialize with your API key</h4>
+                <CodeBlock
+                  code={`import { GuardianLayer } from '@guardianlayer/sdk';
+
+// Initialize with your API key and wallet provider
+const guardian = new GuardianLayer({
+  apiKey: "YOUR_API_KEY", // Use your project API key here
+  wallet: yourWalletProvider,
+  modules: ['txSecurity', 'recovery', 'biometric']
+});`}
+                  language="javascript"
+                />
+              </li>
+              <li>
+                <h4 className="font-semibold">Implement security features</h4>
+                <p className="text-sm text-muted-foreground mb-2">
+                  Use the SDK to secure your transactions and authenticate users.
+                </p>
+              </li>
+            </ol>
+          </div>
+        </TabsContent>
+
+        {/* API Keys Tab */}
+        <TabsContent value="api-keys" className="space-y-6">
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">API Keys</h3>
+            <p className="text-muted-foreground mb-6">
+              Manage your API keys for different environments and projects.
+            </p>
+
+            <div className="space-y-4">
+              {projects.map(project => (
+                <div key={project.id} className="p-4 border rounded-md">
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-semibold">{project.name}</h4>
+                    <Badge variant={project.environment === "production" ? "default" : "outline"}>
+                      {project.environment}
                     </Badge>
                   </div>
-                ))}
-              </div>
-
-              <div className="pt-4">
-                <h3 className="text-lg font-medium mb-2">Add Team Member</h3>
-                <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <Input 
-                      placeholder="Email address" 
-                      value={newTeamMemberEmail}
-                      onChange={(e) => setNewTeamMemberEmail(e.target.value)}
-                    />
+                  <div className="flex items-center justify-between">
+                    <code className="bg-muted px-2 py-1 rounded text-sm font-mono">
+                      {project.apiKey}
+                    </code>
+                    <div className="flex space-x-2">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => copyToClipboard(project.apiKey)}
+                      >
+                        Copy
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleRegenerateKey(project.id)}
+                      >
+                        Regenerate
+                      </Button>
+                    </div>
                   </div>
-                  <Select value={newTeamMemberRole} onValueChange={setNewTeamMemberRole}>
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue placeholder="Role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Admin">Admin</SelectItem>
-                      <SelectItem value="Developer">Developer</SelectItem>
-                      <SelectItem value="Viewer">Viewer</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button onClick={handleAddTeamMember}>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Invite
-                  </Button>
                 </div>
+              ))}
+            </div>
+
+            <div className="mt-6 p-4 border rounded-md bg-amber-500/10 border-amber-500/30">
+              <div className="flex items-center mb-2">
+                <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
+
+                <h4 className="font-semibold">API Key Security</h4>
               </div>
-            </CardContent>
-          </Card>
+              <p className="text-sm">
+                Keep your API keys secure and never expose them in client-side code. Use environment variables
+                or secure vaults to store your keys in production environments.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">API Usage Guidelines</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-semibold mb-2">Rate Limits</h4>
+                <p className="text-sm text-muted-foreground">
+                  Developer plan: 1,000 requests/day<br />
+                  Professional plan: 10,000 requests/day<br />
+                  Enterprise plan: Custom limits
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Authentication</h4>
+                <p className="text-sm text-muted-foreground">
+                  Include your API key in the authorization header:
+                </p>
+                <CodeBlock
+                  code={`Authorization: Bearer YOUR_API_KEY`}
+                  language="plaintext"
+                />
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Error Handling</h4>
+                <p className="text-sm text-muted-foreground">
+                  Our API returns standard HTTP status codes and detailed error messages.
+                </p>
+              </div>
+            </div>
+          </div>
         </TabsContent>
 
-        {/* Projects Tab Content */}
-        <TabsContent value="projects">
-          <Card>
-            <CardHeader>
-              <CardTitle>Projects</CardTitle>
-              <CardDescription>
-                Manage your GuardianLayer projects
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">Projects Section</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is where you'll manage your wallet security projects
-                </p>
-                <Button>Create New Project</Button>
+        {/* Usage Tab */}
+        <TabsContent value="usage" className="space-y-6">
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">API Usage Statistics</h3>
+            <p className="text-muted-foreground mb-6">
+              Monitor your API usage across all projects.
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="p-4 bg-blue-500/10 rounded-md border border-blue-500/20">
+                <h4 className="text-sm font-medium text-muted-foreground">Total Requests</h4>
+                <p className="text-2xl font-bold">{usageStats.totalRequests.toLocaleString()}</p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="p-4 bg-green-500/10 rounded-md border border-green-500/20">
+                <h4 className="text-sm font-medium text-muted-foreground">Security Checks</h4>
+                <p className="text-2xl font-bold">{usageStats.securityChecks.toLocaleString()}</p>
+              </div>
+              <div className="p-4 bg-purple-500/10 rounded-md border border-purple-500/20">
+                <h4 className="text-sm font-medium text-muted-foreground">Biometric Auths</h4>
+                <p className="text-2xl font-bold">{usageStats.biometricAuths.toLocaleString()}</p>
+              </div>
+              <div className="p-4 bg-amber-500/10 rounded-md border border-amber-500/20">
+                <h4 className="text-sm font-medium text-muted-foreground">OTP Verifications</h4>
+                <p className="text-2xl font-bold">{usageStats.otpVerifications.toLocaleString()}</p>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-md">
+              <h4 className="font-semibold mb-2">Current Plan: {user.plan}</h4>
+              <div className="w-full bg-muted h-2 rounded-full overflow-hidden mb-2">
+                <div className="bg-primary h-full" style={{ width: "45%" }}></div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                4,500 / 10,000 requests used this month (45%)
+              </p>
+              <Button className="mt-4" variant="outline">Upgrade Plan</Button>
+            </div>
+          </div>
         </TabsContent>
 
-        {/* API Keys Tab Content */}
-        <TabsContent value="api-keys">
-          <Card>
-            <CardHeader>
-              <CardTitle>API Keys</CardTitle>
-              <CardDescription>
-                Manage your API keys for GuardianLayer integration
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Key className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">API Keys Section</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is where you'll manage your API keys for integration
-                </p>
-                <Button>Generate New API Key</Button>
+        {/* Settings Tab */}
+        <TabsContent value="settings" className="space-y-6">
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">Account Settings</h3>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" value={user.name} onChange={(e) => setUser({...user, name: e.target.value})} />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input id="email" value={user.email} onChange={(e) => setUser({...user, email: e.target.value})} />
+              </div>
+              <Button>Update Profile</Button>
+            </div>
+          </div>
 
-        {/* Usage & Logs Tab Content */}
-        <TabsContent value="usage">
-          <Card>
-            <CardHeader>
-              <CardTitle>Usage & Logs</CardTitle>
-              <CardDescription>
-                Monitor your API usage and security events
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Activity className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">Usage & Logs Section</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is where you'll monitor your API usage and security events
-                </p>
-                <Button>View Detailed Analytics</Button>
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">Notification Preferences</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold">Email Notifications</h4>
+                  <p className="text-sm text-muted-foreground">Receive updates about your account and projects</p>
+                </div>
+                <Switch 
+                  checked={settings.emailNotifications} 
+                  onCheckedChange={(checked) => setSettings({...settings, emailNotifications: checked})} 
+                />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold">Security Alerts</h4>
+                  <p className="text-sm text-muted-foreground">Get notified about suspicious activities</p>
+                </div>
+                <Switch 
+                  checked={settings.securityAlerts} 
+                  onCheckedChange={(checked) => setSettings({...settings, securityAlerts: checked})} 
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* Documentation Tab Content */}
-        <TabsContent value="docs">
-          <Card>
-            <CardHeader>
-              <CardTitle>Documentation</CardTitle>
-              <CardDescription>
-                Access implementation guides and API documentation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">Documentation Section</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is where you'll find implementation guides and API documentation
-                </p>
-                <Button>Browse Documentation</Button>
+          <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
+            <h3 className="text-xl font-bold mb-4">Security Settings</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold">Two-Factor Authentication</h4>
+                  <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
+                </div>
+                <Switch 
+                  checked={settings.twoFactorAuth} 
+                  onCheckedChange={(checked) => setSettings({...settings, twoFactorAuth: checked})} 
+                />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* SDKs & Tools Tab Content */}
-        <TabsContent value="sdks">
-          <Card>
-            <CardHeader>
-              <CardTitle>SDKs & Tools</CardTitle>
-              <CardDescription>
-                Access developer tools and SDKs for integration
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Code className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">SDKs & Tools Section</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is where you'll find developer tools and SDKs for integration
+              <div>
+                <h4 className="font-semibold mb-2">API Rate Limiting</h4>
+                <select 
+                  className="w-full p-2 rounded-md border"
+                  value={settings.apiRateLimit}
+                  onChange={(e) => setSettings({...settings, apiRateLimit: e.target.value})}
+                >
+                  <option value="standard">Standard (Default)</option>
+                  <option value="relaxed">Relaxed</option>
+                  <option value="strict">Strict</option>
+                </select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Controls how aggressively rate limiting is applied to your API requests
                 </p>
-                <Button>Explore SDKs</Button>
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Settings Tab Content */}
-        <TabsContent value="settings">
-          <Card>
-            <CardHeader>
-              <CardTitle>Account Settings</CardTitle>
-              <CardDescription>
-                Manage your account preferences and settings
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Settings className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-lg font-medium mb-2">Settings Section</h3>
-                <p className="text-muted-foreground mb-4">
-                  This is where you'll manage your account preferences and settings
-                </p>
-                <Button>Update Settings</Button>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
