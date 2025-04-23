@@ -1,10 +1,11 @@
-
 import { useState } from "react";
 import { MessageSquarePlus, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { useSupabaseUser } from "@/hooks/useSupabaseUser";
+import { submitFeedback } from "@/integrations/supabase/documentationApi";
 
 interface FeedbackWidgetProps {
   sectionId: string;
@@ -16,24 +17,30 @@ const FeedbackWidget = ({ sectionId, sectionTitle }: FeedbackWidgetProps) => {
   const [feedback, setFeedback] = useState("");
   const [feedbackType, setFeedbackType] = useState<"positive" | "negative" | null>(null);
   const { toast } = useToast();
+  const user = useSupabaseUser();
 
-  const handleSubmitFeedback = (e: React.FormEvent) => {
+  const handleSubmitFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // In a real implementation, you'd send this to your backend
-    console.log({
-      sectionId,
-      sectionTitle,
-      feedbackType,
-      feedback,
-      timestamp: new Date().toISOString(),
-    });
-    
-    toast({
-      title: "Feedback submitted",
-      description: "Thank you for your feedback!",
-    });
-    
+
+    try {
+      await submitFeedback({
+        sectionId,
+        helpful: feedbackType === "positive",
+        message: feedback,
+        userId: user?.id || null
+      });
+
+      toast({
+        title: "Feedback submitted",
+        description: "Thank you for your feedback!",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Submission error",
+        description: error?.message || "Something went wrong."
+      });
+    }
+
     setIsOpen(false);
     setFeedback("");
     setFeedbackType(null);

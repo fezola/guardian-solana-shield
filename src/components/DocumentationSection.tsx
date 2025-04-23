@@ -14,6 +14,7 @@ import FeedbackWidget from "./FeedbackWidget";
 import UpdatedTimestamp from "./UpdatedTimestamp";
 import CollapsibleSidebar from "./CollapsibleSidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useDocumentationSections } from "@/hooks/useDocumentationSections";
 
 const codeExamples = {
   javascript: {
@@ -745,8 +746,21 @@ const wallet = await guardian.completeRecovery({
 
 const DocumentationSection = () => {
   const docRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  const [activeSection, setActiveSection] = useState(sections[0].id);
+  const [activeSection, setActiveSection] = useState("");
   const isMobile = useIsMobile();
+  const { data: dbSections, isLoading, error } = useDocumentationSections();
+
+  const sections = dbSections?.map(dbSection => ({
+    ...dbSection,
+    content: dbSection.content, // You may need to deserialize if content is stored as JSON
+    icon: (() => {
+      // Map icon string to imported icon component, fallback to FileText
+      const allIcons = {Book, FileText, Code, FileCode, Shield, Settings, Copy, Terminal, Database, Key, Fingerprint, AlertTriangle, User, LayoutDashboard, AppWindow, Lock};
+      // @ts-ignore
+      return allIcons[dbSection.icon] || FileText;
+    })(),
+    lastUpdated: dbSection.updated_at ? dbSection.updated_at.split("T")[0] : "",
+  })) || [];
 
   const scrollToSection = (id: string) => {
     docRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -761,6 +775,13 @@ const DocumentationSection = () => {
       setTimeout(() => scrollToSection(sectionId), 100);
     }
   }, []);
+
+  if (isLoading) {
+    return <div className="p-12 text-center text-muted-foreground">Loading documentation…</div>
+  }
+  if (error) {
+    return <div className="p-12 text-center text-red-600">Error loading documentation.</div>
+  }
 
   return (
     <section id="documentation" className="py-12 lg:py-24">
@@ -777,7 +798,11 @@ const DocumentationSection = () => {
             <div className="lg:hidden mb-6">
               <DocumentationSearch 
                 sections={sections}
-                onSelectSection={scrollToSection}
+                onSelectSection={id => {
+                  docRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  setActiveSection(id);
+                  window.history.pushState(null, "", `#${id}`);
+                }}
               />
             </div>
           )}
@@ -787,7 +812,11 @@ const DocumentationSection = () => {
               {!isMobile && (
                 <DocumentationSearch 
                   sections={sections}
-                  onSelectSection={scrollToSection}
+                  onSelectSection={id => {
+                    docRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    setActiveSection(id);
+                    window.history.pushState(null, "", `#${id}`);
+                  }}
                 />
               )}
               
@@ -797,7 +826,11 @@ const DocumentationSection = () => {
                   {sections.map((section) => (
                     <li key={section.id}>
                       <button
-                        onClick={() => scrollToSection(section.id)}
+                        onClick={() => {
+                          docRefs.current[section.id]?.scrollIntoView({ behavior: "smooth", block: "start" });
+                          setActiveSection(section.id);
+                          window.history.pushState(null, "", `#${section.id}`);
+                        }}
                         className={`flex w-full items-center gap-2 py-2 px-3 rounded-md hover:bg-muted transition-colors text-left ${
                           activeSection === section.id
                             ? "bg-primary/10 text-primary font-medium"
@@ -844,5 +877,4 @@ const DocumentationSection = () => {
     </section>
   );
 };
-
 export default DocumentationSection;

@@ -9,13 +9,182 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      code_examples: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          language: string
+          section_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          language: string
+          section_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          language?: string
+          section_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "code_examples_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "documentation_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documentation_feedback: {
+        Row: {
+          created_at: string
+          helpful: boolean | null
+          id: string
+          message: string | null
+          section_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          helpful?: boolean | null
+          id?: string
+          message?: string | null
+          section_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          helpful?: boolean | null
+          id?: string
+          message?: string | null
+          section_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documentation_feedback_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "documentation_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documentation_sections: {
+        Row: {
+          content: Json
+          created_at: string
+          icon: string
+          id: string
+          last_updated_by: string | null
+          order_index: number
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          icon: string
+          id?: string
+          last_updated_by?: string | null
+          order_index: number
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          icon?: string
+          id?: string
+          last_updated_by?: string | null
+          order_index?: number
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
     }
     Enums: {
       [_ in never]: never
