@@ -11,7 +11,15 @@ import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import Login from "./pages/Login";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -25,6 +33,9 @@ const App = () => (
           <Route path="/developer-tools" element={<DeveloperTools />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<UserProfile />} />
+          <Route path="/api-keys" element={<UserProfile />} />
+          <Route path="/logs" element={<UserProfile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

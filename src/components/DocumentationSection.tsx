@@ -1,226 +1,14 @@
-
 import { Book, FileText, Code, FileCode, Shield, Settings, Copy, Terminal, Database, Key, Fingerprint, AlertTriangle, User, LayoutDashboard, AppWindow, Lock } from "lucide-react";
 import { useRef, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import CodeBlock from "./CodeBlock";
 import ApiKeySection from "./ApiKeySection";
+import SdkIntegrationSection from "./SdkIntegrationSection";
+import PlaygroundSection from "./PlaygroundSection";
+import ServerSideApiSection from "./ServerSideApiSection";
+import DemoAppSection from "./DemoAppSection";
 
-// Demo app section
-const DemoAppSection = () => {
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [isSecure, setIsSecure] = useState(false);
-  const [requiresBiometric, setRequiresBiometric] = useState(false);
-  const [needsOtp, setNeedsOtp] = useState(false);
-  const [risk, setRisk] = useState<'low' | 'medium' | 'high' | null>(null);
-  const [otp, setOtp] = useState('');
-
-  const runSimulation = () => {
-    setIsSimulating(true);
-    setTimeout(() => {
-      // Simulate transaction risk analysis
-      const risks = ['low', 'medium', 'high'] as const;
-      const simulatedRisk = risks[Math.floor(Math.random() * risks.length)];
-      setRisk(simulatedRisk);
-      setIsSimulating(false);
-
-      if (simulatedRisk === 'high') {
-        setRequiresBiometric(true);
-        setNeedsOtp(true);
-      } else if (simulatedRisk === 'medium') {
-        setRequiresBiometric(true);
-        setNeedsOtp(false);
-      } else {
-        setRequiresBiometric(false);
-        setNeedsOtp(false);
-        setIsSecure(true);
-      }
-    }, 2000);
-  };
-
-  const handleBiometricAuth = () => {
-    setTimeout(() => {
-      setRequiresBiometric(false);
-      if (needsOtp) {
-        // For high-risk transactions, we still need OTP
-      } else {
-        setIsSecure(true);
-      }
-    }, 1000);
-  };
-
-  const handleOtpVerify = () => {
-    if (otp === '123456') {
-      setNeedsOtp(false);
-      setIsSecure(true);
-    }
-  };
-
-  const resetDemo = () => {
-    setIsSimulating(false);
-    setIsSecure(false);
-    setRequiresBiometric(false);
-    setNeedsOtp(false);
-    setRisk(null);
-    setOtp('');
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
-        <h3 className="text-xl font-bold mb-4">Interactive Demo: Transaction Security Flow</h3>
-        <p className="text-muted-foreground mb-6">
-          Experience how GuardianLayer evaluates and protects transactions through a simulated transaction flow.
-        </p>
-
-        <div className="space-y-6">
-          {!isSimulating && !risk && !isSecure && (
-            <div className="space-y-4">
-              <div className="p-4 border rounded-md bg-muted/30">
-                <h4 className="font-semibold mb-2">Demo Transaction</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Type:</span>
-                    <span className="font-semibold">Token Transfer</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>From:</span>
-                    <span className="font-mono">myWallet.eth</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>To:</span>
-                    <span className="font-mono">unknown.eth</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Amount:</span>
-                    <span className="font-semibold">1500 SOL</span>
-                  </div>
-                </div>
-              </div>
-              <Button onClick={runSimulation} className="w-full">Simulate & Check Transaction</Button>
-            </div>
-          )}
-
-          {isSimulating && (
-            <div className="text-center py-10 space-y-4">
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-primary mx-auto"></div>
-              <p>Simulating transaction and analyzing risk...</p>
-            </div>
-          )}
-
-          {risk && !isSecure && (
-            <div className="space-y-4">
-              <div className={`p-4 border rounded-md ${risk === 'high' ? 'bg-red-500/10 border-red-500/30' :
-                  risk === 'medium' ? 'bg-amber-500/10 border-amber-500/30' :
-                    'bg-green-500/10 border-green-500/30'
-                }`}>
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold">Risk Analysis Results</h4>
-                  <span className={`px-2 py-1 rounded-full text-xs ${risk === 'high' ? 'bg-red-500 text-white' :
-                      risk === 'medium' ? 'bg-amber-500 text-white' :
-                        'bg-green-500 text-white'
-                    }`}>
-                    {risk.toUpperCase()} RISK
-                  </span>
-                </div>
-                <p className="text-sm">
-                  {risk === 'high' && 'This transaction was flagged as high risk. Multiple verification required.'}
-                  {risk === 'medium' && 'This transaction has some risk factors. Additional verification required.'}
-                  {risk === 'low' && 'This transaction appears to be safe. Minimal verification required.'}
-                </p>
-              </div>
-
-              {requiresBiometric && (
-                <div className="p-4 border rounded-md bg-blue-500/10 border-blue-500/30">
-                  <div className="flex items-center mb-2">
-                    <Fingerprint className="h-5 w-5 mr-2 text-blue-500" />
-                    <h4 className="font-semibold">Biometric Authentication Required</h4>
-                  </div>
-                  <p className="text-sm mb-3">Please verify your identity to proceed with this transaction.</p>
-                  <Button onClick={handleBiometricAuth} variant="outline" className="w-full">
-                    Authenticate with Biometrics
-                  </Button>
-                </div>
-              )}
-
-              {needsOtp && !requiresBiometric && (
-                <div className="p-4 border rounded-md bg-purple-500/10 border-purple-500/30">
-                  <div className="flex items-center mb-2">
-                    <Key className="h-5 w-5 mr-2 text-purple-500" />
-                    <h4 className="font-semibold">Email OTP Verification</h4>
-                  </div>
-                  <p className="text-sm mb-3">
-                    A verification code has been sent to your email. Please enter it below.
-                  </p>
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      placeholder="Enter 6-digit code"
-                      className="flex-1 px-3 py-2 border rounded"
-                      maxLength={6}
-                    />
-                    <Button onClick={handleOtpVerify} disabled={otp.length !== 6}>
-                      Verify
-                    </Button>
-                  </div>
-                  <p className="text-xs mt-2 text-muted-foreground">For demo, use code: 123456</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {isSecure && (
-            <div className="space-y-4">
-              <div className="p-4 border rounded-md bg-green-500/10 border-green-500/30">
-                <div className="flex items-center mb-2">
-                  <Shield className="h-5 w-5 mr-2 text-green-500" />
-                  <h4 className="font-semibold">Transaction Secured</h4>
-                </div>
-                <p className="text-sm mb-3">
-                  All security checks passed. Your transaction has been successfully verified and secured.
-                </p>
-              </div>
-              <Button onClick={resetDemo} variant="outline" className="w-full">
-                Start New Demo
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="bg-card p-6 rounded-xl shadow-md border border-border/50">
-        <h3 className="text-xl font-bold mb-4">How This Demo Works</h3>
-        <p className="text-muted-foreground mb-4">
-          The demo simulates GuardianLayer's multi-layered security approach:
-        </p>
-        <ol className="list-decimal ml-5 space-y-2 text-sm">
-          <li>Transaction simulation to analyze and classify risk</li>
-          <li>Adaptive security based on risk level</li>
-          <li>Biometric authentication for medium/high risk transactions</li>
-          <li>Email OTP verification for high risk transactions</li>
-          <li>Final transaction approval and execution</li>
-        </ol>
-        <div className="mt-4 p-4 bg-muted/30 rounded-md">
-          <h4 className="font-semibold mb-2 text-sm">Implementation Example:</h4>
-          <CodeBlock
-            code={`// This is how the demo is implemented in your app
-const securedTx = await guardian.secureTransaction(tx, {
-  simulate: true,            // Run simulation first
-  biometric: riskLevel > 1,  // For medium/high risk
-  otp: riskLevel > 2,        // For high risk only
-  emailAddress: user.email
-});`}
-            language="javascript"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Code examples for each language
 const codeExamples = {
   javascript: {
     installation: `npm install @guardianlayer/sdk @guardianlayer/react`,
@@ -483,94 +271,94 @@ const sections = [
       <div>
         <h3 className="text-lg font-bold mb-4">Core API Functions</h3>
         <p className="mb-4">The GuardianLayer SDK provides a comprehensive API for securing transactions and managing user authentication:</p>
-
+        
         <Tabs defaultValue="javascript">
           <TabsList className="mb-4">
             <TabsTrigger value="javascript">JavaScript</TabsTrigger>
             <TabsTrigger value="python">Python</TabsTrigger>
             <TabsTrigger value="rust">Rust</TabsTrigger>
           </TabsList>
-
+          
           <TabsContent value="javascript">
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Installation</h4>
                 <CodeBlock code={codeExamples.javascript.installation} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Initialization</h4>
                 <CodeBlock code={codeExamples.javascript.initialization} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Transaction Risk Assessment</h4>
                 <CodeBlock code={codeExamples.javascript.simulateAndCheck} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Biometric Authentication</h4>
                 <CodeBlock code={codeExamples.javascript.biometricAuth} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Complete Implementation</h4>
                 <CodeBlock code={codeExamples.javascript.fullImplementation} />
               </div>
             </div>
           </TabsContent>
-
+          
           <TabsContent value="python">
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Installation</h4>
                 <CodeBlock code={codeExamples.python.installation} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Initialization</h4>
                 <CodeBlock code={codeExamples.python.initialization} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Transaction Risk Assessment</h4>
                 <CodeBlock code={codeExamples.python.simulateAndCheck} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Biometric Authentication</h4>
                 <CodeBlock code={codeExamples.python.biometricAuth} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Complete Implementation</h4>
                 <CodeBlock code={codeExamples.python.fullImplementation} />
               </div>
             </div>
           </TabsContent>
-
+          
           <TabsContent value="rust">
             <div className="space-y-4">
               <div>
                 <h4 className="font-semibold mb-2">Installation</h4>
                 <CodeBlock code={codeExamples.rust.installation} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Initialization</h4>
                 <CodeBlock code={codeExamples.rust.initialization} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Transaction Risk Assessment</h4>
                 <CodeBlock code={codeExamples.rust.simulateAndCheck} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Biometric Authentication</h4>
                 <CodeBlock code={codeExamples.rust.biometricAuth} />
               </div>
-
+              
               <div>
                 <h4 className="font-semibold mb-2">Complete Implementation</h4>
                 <CodeBlock code={codeExamples.rust.fullImplementation} />
@@ -585,140 +373,7 @@ const sections = [
     icon: Code,
     title: "Integration Guides",
     id: "integration-guides",
-    content: (
-      <div>
-        <div className="mb-6">
-          <h3 className="text-lg font-bold mb-2">Step-by-Step Integration Guide</h3>
-          <p className="text-muted-foreground mb-4">
-            Follow these steps to integrate GuardianLayer security features into your application:
-          </p>
-
-          <ol className="space-y-4 ml-5 list-decimal">
-            <li>
-              <h4 className="font-semibold">Install the SDK</h4>
-              <CodeBlock
-                code={`npm install @guardianlayer/sdk @guardianlayer/react`}
-              />
-            </li>
-
-            <li>
-              <h4 className="font-semibold">Initialize the SDK</h4>
-              <CodeBlock
-                code={`import { GuardianLayer } from '@guardianlayer/sdk';
-
-// Initialize with your wallet provider
-const guardian = new GuardianLayer({
-  wallet: yourWalletProvider,
-  apiKey: "YOUR_API_KEY", // Obtain from dashboard
-  modules: [
-    'txSecurity',  // Transaction risk assessment
-    'recovery',    // Wallet recovery options
-    'biometric',   // Biometric authentication
-    'otp'          // One-time password verification
-  ]
-});`}
-              />
-            </li>
-
-            <li>
-              <h4 className="font-semibold">Add Transaction Protection</h4>
-              <CodeBlock
-                code={`// In your transaction handler:
-async function handleSendTransaction(tx) {
-  try {
-    // Analyze transaction risk
-    const risk = await guardian.simulateAndCheck(tx);
-    
-    // If risky, warn user
-    if (risk.level !== 'safe') {
-      const proceed = await guardian.promptUserWarning(risk);
-      if (!proceed) return;
-    }
-    
-    // Add biometric check for all transactions
-    const verified = await guardian.requireBiometric();
-    if (!verified) return;
-    
-    // Execute the transaction
-    await wallet.sendTransaction(tx);
-    
-  } catch (error) {
-    console.error("Transaction failed:", error);
-  }
-}`}
-              />
-            </li>
-
-            <li>
-              <h4 className="font-semibold">For React Applications</h4>
-              <CodeBlock
-                code={`import { GuardianProvider, SecureButton } from '@guardianlayer/react';
-
-function App() {
-  return (
-    <GuardianProvider
-      wallet={yourWalletProvider}
-      apiKey="YOUR_API_KEY"
-    >
-      <YourApp />
-    </GuardianProvider>
-  );
-}
-
-// Then in your component:
-function SendButton() {
-  const handleSuccess = (result) => {
-    console.log("Transaction successful:", result);
-  };
-  
-  return (
-    <SecureButton
-      transaction={yourTransaction}
-      securityLevel="high" // 'low', 'medium', or 'high'
-      onSuccess={handleSuccess}
-      onError={(error) => console.error(error)}
-    >
-      Send Securely
-    </SecureButton>
-  );
-}`}
-              />
-            </li>
-
-            <li>
-              <h4 className="font-semibold">Configure Recovery Options</h4>
-              <CodeBlock
-                code={`// Set up wallet recovery methods
-await guardian.setupRecovery({
-  method: 'shamir', // 'shamir', 'timelock', 'guardians'
-  threshold: 2,     // Number of shares needed for recovery
-  shares: 3,        // Total number of shares to generate
-  emails: [         // Optional: Send shares to emails
-    'backup1@example.com',
-    'backup2@example.com',
-    'backup3@example.com'
-  ]
-});`}
-              />
-            </li>
-          </ol>
-        </div>
-
-        <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-          <h4 className="font-semibold flex items-center mb-2">
-            <AlertTriangle className="h-5 w-5 mr-2 text-primary" />
-            Best Practices
-          </h4>
-          <ul className="list-disc ml-5 space-y-2">
-            <li>Always initialize GuardianLayer as early as possible in your app lifecycle</li>
-            <li>Store API keys securely on your server, not in client-side code</li>
-            <li>Implement proper error handling for all security operations</li>
-            <li>Test thoroughly in sandbox environment before going to production</li>
-            <li>Use the React components when possible for simplified integration</li>
-          </ul>
-        </div>
-      </div>
-    ),
+    content: <SdkIntegrationSection />,
   },
   {
     icon: FileCode,
@@ -729,14 +384,14 @@ await guardian.setupRecovery({
         <p className="mb-4">
           GuardianLayer uses zkSNARK circuits for privacy-preserving identity and biometric/credential proofs. Common circuits supported:
         </p>
-
+        
         <div className="space-y-6">
           <div>
             <h3 className="text-lg font-bold mb-2">Biometric Template Verification</h3>
             <p className="text-muted-foreground mb-4">
               Verify biometric data like fingerprints without exposing the actual biometric data:
             </p>
-            <CodeBlock
+            <CodeBlock 
               code={`// Generate a biometric commitment
 const biometricTemplate = await guardian.generateBiometricTemplate();
               
@@ -747,10 +402,10 @@ const proof = await guardian.createBiometricProof({
 });
 
 // Send only the proof to the server for verification
-const verified = await guardian.verifyBiometricProof(proof);`}
+const verified = await guardian.verifyBiometricProof(proof);`} 
             />
           </div>
-
+          
           <div>
             <h3 className="text-lg font-bold mb-2">Email Ownership Proof</h3>
             <p className="text-muted-foreground mb-4">
@@ -775,7 +430,7 @@ const proof = await guardian.generateZkProof({
 const isValid = await verifier.verifyEmailProof(proof);`}
             />
           </div>
-
+          
           <div>
             <h3 className="text-lg font-bold mb-2">Device Fingerprinting Circuit</h3>
             <p className="text-muted-foreground mb-4">
@@ -796,7 +451,7 @@ const proof = await guardian.createDeviceProof({
 const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
             />
           </div>
-
+          
           <div className="p-4 rounded-lg bg-muted border border-border">
             <h4 className="font-semibold mb-2">Technical Deep Dive</h4>
             <p className="text-sm mb-3">
@@ -828,7 +483,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
         <p className="mb-4">
           GuardianLayer applies a multi-layer approach to secure transactions and wallet operations:
         </p>
-
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
@@ -840,7 +495,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               Uses a combination of on-chain simulation and pattern recognition.
             </p>
           </div>
-
+          
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <Fingerprint className="h-5 w-5 mr-2 text-blue-500" />
@@ -851,7 +506,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               without storing actual biometric data.
             </p>
           </div>
-
+          
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <Key className="h-5 w-5 mr-2 text-purple-500" />
@@ -862,7 +517,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               PIN/passphrase is never transmitted in plaintext.
             </p>
           </div>
-
+          
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <Database className="h-5 w-5 mr-2 text-indigo-500" />
@@ -874,13 +529,13 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
             </p>
           </div>
         </div>
-
+        
         <div className="mb-6">
           <h3 className="text-lg font-bold mb-3">Security Levels and Risk Adaptation</h3>
           <p className="text-muted-foreground mb-4">
             GuardianLayer adjusts security requirements based on transaction risk assessment:
           </p>
-
+          
           <div className="space-y-3">
             <div className="flex items-center">
               <div className="w-20 text-green-500 font-medium">Low Risk</div>
@@ -889,7 +544,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               </div>
               <div className="w-36 text-sm ml-3">Basic checks only</div>
             </div>
-
+            
             <div className="flex items-center">
               <div className="w-20 text-amber-500 font-medium">Medium Risk</div>
               <div className="flex-1 bg-gray-200 h-2 rounded-full">
@@ -897,7 +552,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
               </div>
               <div className="w-36 text-sm ml-3">+Biometric verification</div>
             </div>
-
+            
             <div className="flex items-center">
               <div className="w-20 text-red-500 font-medium">High Risk</div>
               <div className="flex-1 bg-gray-200 h-2 rounded-full">
@@ -907,7 +562,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
             </div>
           </div>
         </div>
-
+        
         <div className="p-4 rounded-lg border border-primary/20 bg-primary/5">
           <h4 className="font-semibold mb-2">Security Certification</h4>
           <p className="text-sm">
@@ -963,7 +618,7 @@ const wallet = await guardian.recoverWallet({
 });`}
             />
           </div>
-
+          
           <div>
             <h4 className="font-semibold mb-2">Time-locked Recovery</h4>
             <p className="text-muted-foreground mb-3">
@@ -991,7 +646,7 @@ const wallet = await guardian.completeRecovery({
 });`}
             />
           </div>
-
+          
           <div>
             <h4 className="font-semibold mb-2">Social Recovery (Guardians)</h4>
             <p className="text-muted-foreground mb-3">
@@ -1026,7 +681,7 @@ const wallet = await guardian.completeRecovery({
             />
           </div>
         </div>
-
+        
         <div className="mt-6 p-4 rounded-lg bg-muted/20 border border-border">
           <h4 className="font-semibold mb-3">Recovery Best Practices</h4>
           <ul className="list-disc ml-5 space-y-2">
@@ -1055,6 +710,18 @@ const wallet = await guardian.completeRecovery({
     title: "API Key Management",
     id: "api-key",
     content: <ApiKeySection />
+  },
+  {
+    icon: Database,
+    title: "Server API",
+    id: "server-api",
+    content: <ServerSideApiSection />
+  },
+  {
+    icon: Terminal,
+    title: "Interactive Playground",
+    id: "playground",
+    content: <PlaygroundSection />
   },
 ];
 

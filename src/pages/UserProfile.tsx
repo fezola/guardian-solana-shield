@@ -1,9 +1,27 @@
+
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import UserProfileSection from "@/components/UserProfileSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { User, Shield, Key, Settings, Activity, FileText, Code, Database } from "lucide-react";
+import { 
+  User, 
+  Shield, 
+  Key, 
+  Settings, 
+  Activity, 
+  FileText, 
+  Code, 
+  Database, 
+  ChartBar 
+} from "lucide-react";
+import DashboardSection from "@/components/DashboardSection";
+import LogsSection from "@/components/LogsSection";
+import ApiKeySection from "@/components/ApiKeySection";
+import AuditLogsSection from "@/components/AuditLogsSection";
+import SdkIntegrationSection from "@/components/SdkIntegrationSection";
+import PlaygroundSection from "@/components/PlaygroundSection";
+import ServerSideApiSection from "@/components/ServerSideApiSection";
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -26,6 +44,13 @@ const UserProfile = () => {
                         value="dashboard" 
                         className="justify-start w-full"
                       >
+                        <ChartBar className="h-4 w-4 mr-2" />
+                        Dashboard
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="profile" 
+                        className="justify-start w-full"
+                      >
                         <User className="h-4 w-4 mr-2" />
                         My Profile
                       </TabsTrigger>
@@ -44,25 +69,39 @@ const UserProfile = () => {
                         API Keys
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="usage" 
+                        value="logs" 
                         className="justify-start w-full"
                       >
                         <Activity className="h-4 w-4 mr-2" />
-                        Usage & Logs
+                        Logs & Activity
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="docs" 
+                        value="audit" 
                         className="justify-start w-full"
                       >
                         <FileText className="h-4 w-4 mr-2" />
-                        Documentation
+                        Audit Logs
                       </TabsTrigger>
                       <TabsTrigger 
-                        value="sdks" 
+                        value="sdk" 
                         className="justify-start w-full"
                       >
                         <Code className="h-4 w-4 mr-2" />
-                        SDKs & Tools
+                        SDK Integration
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="playground" 
+                        className="justify-start w-full"
+                      >
+                        <Code className="h-4 w-4 mr-2" />
+                        Playground
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="server-api" 
+                        className="justify-start w-full"
+                      >
+                        <Database className="h-4 w-4 mr-2" />
+                        Server API
                       </TabsTrigger>
                       <TabsTrigger 
                         value="settings" 
@@ -94,7 +133,45 @@ const UserProfile = () => {
             
             {/* Main Content */}
             <div className="flex-1">
-              <UserProfileSection activeTab={activeTab} />
+              <TabsContent value="dashboard" className="mt-0">
+                <DashboardSection />
+              </TabsContent>
+              
+              <TabsContent value="profile" className="mt-0">
+                <UserProfileSection activeTab="profile" />
+              </TabsContent>
+              
+              <TabsContent value="projects" className="mt-0">
+                <UserProfileSection activeTab="projects" />
+              </TabsContent>
+              
+              <TabsContent value="api-keys" className="mt-0">
+                <ApiKeySection />
+              </TabsContent>
+              
+              <TabsContent value="logs" className="mt-0">
+                <LogsSection />
+              </TabsContent>
+              
+              <TabsContent value="audit" className="mt-0">
+                <AuditLogsSection />
+              </TabsContent>
+              
+              <TabsContent value="sdk" className="mt-0">
+                <SdkIntegrationSection />
+              </TabsContent>
+              
+              <TabsContent value="playground" className="mt-0">
+                <PlaygroundSection />
+              </TabsContent>
+              
+              <TabsContent value="server-api" className="mt-0">
+                <ServerSideApiSection />
+              </TabsContent>
+              
+              <TabsContent value="settings" className="mt-0">
+                <UserProfileSection activeTab="settings" />
+              </TabsContent>
             </div>
           </div>
         </div>
