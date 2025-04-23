@@ -187,8 +187,10 @@ const LogsSection = () => {
                     <TableCell>
                       <Badge variant={
                         log.status === "blocked" || log.status === "failure" ? "destructive" :
-                        log.status === "warned" ? "warning" :
-                        log.status === "allowed" || log.status === "success" ? "success" : "default"
+                        log.status === "warned" ? "secondary" :
+                        log.status === "allowed" || log.status === "success" ? "default" : "outline"
+                      } className={
+                        log.status === "allowed" || log.status === "success" ? "bg-green-500 hover:bg-green-600" : ""
                       }>
                         {log.status.charAt(0).toUpperCase() + log.status.slice(1)}
                       </Badge>

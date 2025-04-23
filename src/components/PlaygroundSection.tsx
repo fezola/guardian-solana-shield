@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +23,6 @@ const PlaygroundSection = () => {
   const [apiKeyTestResult, setApiKeyTestResult] = useState(null);
   const [apiKeyTestLoading, setApiKeyTestLoading] = useState(false);
   
-  // Transaction Security Tab
   const handleTransactionTypeChange = (value) => {
     setTransactionSimulation({
       ...transactionSimulation,
@@ -43,12 +41,10 @@ const PlaygroundSection = () => {
   const runTransactionSimulation = () => {
     setSimulationLoading(true);
     
-    // Simulate API call - different risks based on transaction type and values
     setTimeout(() => {
       let risk;
       let warnings = [];
       
-      // Simulate risk assessment based on transaction type and values
       if (transactionSimulation.type === "approval") {
         risk = "high";
         warnings = ["Unlimited token approval requested", "Contract has not been audited"];
@@ -77,11 +73,9 @@ const PlaygroundSection = () => {
     }, 1500);
   };
   
-  // API Key Test Tab
   const runApiKeyTest = () => {
     setApiKeyTestLoading(true);
     
-    // Simulate API call
     setTimeout(() => {
       const results = {
         verification: {
@@ -111,7 +105,6 @@ const PlaygroundSection = () => {
     }, 1000);
   };
   
-  // Transaction code example
   const transactionCodeExample = `// GuardianLayer secure transaction example
 import { GuardianLayer } from '@guardianlayer/sdk';
 
@@ -123,7 +116,6 @@ const guardian = new GuardianLayer({
 // Security wrapper for transactions
 async function secureSendTransaction(tx) {
   try {
-    // 1. Simulate and check the transaction
     const result = await guardian.secureTransaction({
       transaction: tx,
       options: {
@@ -135,7 +127,6 @@ async function secureSendTransaction(tx) {
       }
     });
     
-    // 2. If all security checks pass, transaction is allowed
     console.log("Transaction secured:", result);
     return result;
     
