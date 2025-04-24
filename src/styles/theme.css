@@ -1,7 +1,6 @@
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* This file contains theme variables that can be used alongside index.css */
+/* We're keeping the base Tailwind directives in index.css to avoid conflicts */
 
 @layer base {
   :root {
