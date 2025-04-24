@@ -12,7 +12,8 @@ import DocumentationSearch from "./DocumentationSearch";
 import AnchorLink from "./AnchorLink";
 import FeedbackWidget from "./FeedbackWidget";
 import UpdatedTimestamp from "./UpdatedTimestamp";
-import CollapsibleSidebar from "./CollapsibleSidebar";
+import GlobalDocSearch from "./GlobalDocSearch";
+import DocAnalytics from "./DocAnalytics";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const codeExamples = {
@@ -270,6 +271,10 @@ async fn secure_and_send_transaction(tx: Transaction) -> Result<(), Error> {
 }`
   }
 };
+
+interface DocumentationSectionProps {
+  version?: string;
+}
 
 const sections = [
   {
@@ -743,7 +748,7 @@ const wallet = await guardian.completeRecovery({
   },
 ];
 
-const DocumentationSection = () => {
+const DocumentationSection = ({ version = "v2.5" }: DocumentationSectionProps) => {
   const docRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [activeSection, setActiveSection] = useState(sections[0].id);
   const isMobile = useIsMobile();
@@ -753,6 +758,9 @@ const DocumentationSection = () => {
     setActiveSection(id);
     
     window.history.pushState(null, "", `#${id}`);
+    
+    // Track section view with analytics
+    console.log(`Analytics: Scrolled to section ${id}`);
   };
   
   useEffect(() => {
@@ -762,11 +770,25 @@ const DocumentationSection = () => {
     }
   }, []);
 
+  // Add version display
+  const versionBadge = version !== "v2.5" ? (
+    <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+      {version}
+    </div>
+  ) : (
+    <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+      Latest ({version})
+    </div>
+  );
+
   return (
     <section id="documentation" className="py-12 lg:py-24">
       <div className="container">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4 gradient-text animate-fade-in">Documentation</h2>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <h2 className="text-3xl font-bold gradient-text animate-fade-in">Documentation</h2>
+            {versionBadge}
+          </div>
           <p className="text-muted-foreground max-w-2xl mx-auto animate-fade-in">
             Comprehensive guides, tutorials, and technical references for integrating GuardianLayer security features.
           </p>
@@ -775,46 +797,15 @@ const DocumentationSection = () => {
         <div className="flex flex-col lg:flex-row gap-10">
           {isMobile && (
             <div className="lg:hidden mb-6">
-              <DocumentationSearch 
-                sections={sections}
-                onSelectSection={scrollToSection}
-              />
+              <GlobalDocSearch sections={sections} />
             </div>
           )}
-          
-          <CollapsibleSidebar>
-            <div className="p-4 pt-6">
-              {!isMobile && (
-                <DocumentationSearch 
-                  sections={sections}
-                  onSelectSection={scrollToSection}
-                />
-              )}
-              
-              <h2 className="text-xl font-bold mb-4">Documentation</h2>
-              <nav>
-                <ul className="space-y-2">
-                  {sections.map((section) => (
-                    <li key={section.id}>
-                      <button
-                        onClick={() => scrollToSection(section.id)}
-                        className={`flex w-full items-center gap-2 py-2 px-3 rounded-md hover:bg-muted transition-colors text-left ${
-                          activeSection === section.id
-                            ? "bg-primary/10 text-primary font-medium"
-                            : ""
-                        }`}
-                      >
-                        <section.icon className="h-4 w-4 shrink-0" />
-                        <span className="text-sm">{section.title}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            </div>
-          </CollapsibleSidebar>
 
           <div className="flex-1">
+            <div className="mb-8 max-w-3xl mx-auto">
+              <GlobalDocSearch sections={sections} />
+            </div>
+            
             <div className="space-y-16">
               {sections.map((section) => (
                 <div
@@ -823,6 +814,7 @@ const DocumentationSection = () => {
                   id={section.id}
                   className="scroll-mt-24"
                 >
+                  <DocAnalytics sectionId={section.id} sectionTitle={section.title} />
                   <div className="flex items-center gap-3 mb-6 group">
                     <span className="inline-flex p-2.5 rounded-lg bg-primary/10">
                       <section.icon className="h-5 w-5 text-primary" />

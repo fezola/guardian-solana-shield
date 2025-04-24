@@ -1,4 +1,3 @@
-
 import { 
   FileText, 
   Code, 
@@ -13,6 +12,9 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import VersionSelector from "@/components/VersionSelector";
+import GlobalDocSearch from "@/components/GlobalDocSearch";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   Sidebar,
   SidebarContent,
@@ -85,7 +87,12 @@ const documentationItems = [
   },
 ];
 
-const DocumentationSidebar = () => {
+interface DocumentationSidebarProps {
+  currentVersion: string;
+  onVersionChange: (version: string) => void;
+}
+
+const DocumentationSidebar = ({ currentVersion, onVersionChange }: DocumentationSidebarProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
 
@@ -100,19 +107,25 @@ const DocumentationSidebar = () => {
         <div className="flex items-center px-4 py-2">
           <BookOpen className="mr-2 h-5 w-5" />
           <span className="font-semibold text-lg">Documentation</span>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center space-x-2">
+            <ThemeToggle />
             <SidebarTrigger />
           </div>
         </div>
         <div className="px-4 py-2">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search docs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 h-9"
-            />
+          <div className="flex flex-col space-y-2">
+            <div className="flex justify-between items-center">
+              <VersionSelector onVersionChange={onVersionChange} />
+            </div>
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search section..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8 h-9"
+              />
+            </div>
           </div>
         </div>
       </SidebarHeader>
@@ -147,7 +160,7 @@ const DocumentationSidebar = () => {
               Latest Updates
             </h4>
             <div className="mt-2 text-xs">
-              <p className="text-muted-foreground">API v2.5 is now available with improved zkProof circuit performance</p>
+              <p className="text-muted-foreground">API {currentVersion} is now available with improved zkProof circuit performance</p>
               <a href="#" className="text-primary text-xs mt-1 inline-block hover:underline">Read more</a>
             </div>
           </div>
