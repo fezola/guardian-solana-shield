@@ -82,11 +82,11 @@ const DemoAppSection = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>From:</span>
-                    <span className="font-mono">myWallet.eth</span>
+                    <span className="font-mono">myWallet.sol</span>
                   </div>
                   <div className="flex justify-between">
                     <span>To:</span>
-                    <span className="font-mono">unknown.eth</span>
+                    <span className="font-mono">unknown.sol</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Amount:</span>
