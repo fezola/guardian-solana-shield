@@ -288,7 +288,7 @@ const sections = [
         <p className="mb-4">The GuardianLayer SDK provides a comprehensive API for securing transactions and managing user authentication:</p>
         
         <Tabs defaultValue="javascript">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 overflow-x-auto">
             <TabsTrigger value="javascript">JavaScript</TabsTrigger>
             <TabsTrigger value="python">Python</TabsTrigger>
             <TabsTrigger value="rust">Rust</TabsTrigger>
@@ -503,7 +503,7 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
           GuardianLayer applies a multi-layer approach to secure transactions and wallet operations:
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           <div className="p-4 border rounded-md bg-muted/20">
             <div className="flex items-center mb-2">
               <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
@@ -782,50 +782,50 @@ const DocumentationSection = ({ version = "v2.5" }: DocumentationSectionProps) =
   );
 
   return (
-    <section id="documentation" className="py-12 lg:py-24">
-      <div className="container">
-        <div className="text-center mb-12">
+    <section id="documentation" className="py-8 lg:py-16">
+      <div className="container px-4 sm:px-6">
+        <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <h2 className="text-3xl font-bold gradient-text animate-fade-in">Documentation</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold gradient-text animate-fade-in">Documentation</h2>
             {versionBadge}
           </div>
-          <p className="text-muted-foreground max-w-2xl mx-auto animate-fade-in">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base animate-fade-in">
             Comprehensive guides, tutorials, and technical references for integrating GuardianLayer security features.
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex flex-col lg:flex-row gap-6">
           {isMobile && (
-            <div className="lg:hidden mb-6">
+            <div className="lg:hidden mb-4">
               <GlobalDocSearch sections={sections} />
             </div>
           )}
 
           <div className="flex-1">
-            <div className="mb-8 max-w-3xl mx-auto">
+            <div className="mb-6 max-w-3xl mx-auto">
               <GlobalDocSearch sections={sections} />
             </div>
             
-            <div className="space-y-16">
+            <div className="space-y-12">
               {sections.map((section) => (
                 <div
                   ref={el => (docRefs.current[section.id] = el)}
                   key={section.id}
                   id={section.id}
-                  className="scroll-mt-24"
+                  className="scroll-mt-20"
                 >
                   <DocAnalytics sectionId={section.id} sectionTitle={section.title} />
-                  <div className="flex items-center gap-3 mb-6 group">
-                    <span className="inline-flex p-2.5 rounded-lg bg-primary/10">
+                  <div className="flex items-center gap-3 mb-4 group">
+                    <span className="inline-flex p-2 rounded-lg bg-primary/10">
                       <section.icon className="h-5 w-5 text-primary" />
                     </span>
-                    <h2 className="text-2xl font-bold">
+                    <h2 className="text-xl sm:text-2xl font-bold">
                       {section.title}
                       <AnchorLink id={section.id} />
                     </h2>
                   </div>
                   <UpdatedTimestamp date={section.lastUpdated} />
-                  <div className="mt-6">{section.content}</div>
+                  <div className="mt-4">{section.content}</div>
                   <FeedbackWidget sectionId={section.id} sectionTitle={section.title} />
                 </div>
               ))}
