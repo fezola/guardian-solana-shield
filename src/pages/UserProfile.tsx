@@ -133,45 +133,48 @@ const UserProfile = () => {
             
             {/* Main Content */}
             <div className="flex-1">
-              <TabsContent value="dashboard" className="mt-0">
-                <DashboardSection />
-              </TabsContent>
-              
-              <TabsContent value="profile" className="mt-0">
-                <UserProfileSection activeTab="profile" />
-              </TabsContent>
-              
-              <TabsContent value="projects" className="mt-0">
-                <UserProfileSection activeTab="projects" />
-              </TabsContent>
-              
-              <TabsContent value="api-keys" className="mt-0">
-                <ApiKeySection />
-              </TabsContent>
-              
-              <TabsContent value="logs" className="mt-0">
-                <LogsSection />
-              </TabsContent>
-              
-              <TabsContent value="audit" className="mt-0">
-                <AuditLogsSection />
-              </TabsContent>
-              
-              <TabsContent value="sdk" className="mt-0">
-                <SdkIntegrationSection />
-              </TabsContent>
-              
-              <TabsContent value="playground" className="mt-0">
-                <PlaygroundSection />
-              </TabsContent>
-              
-              <TabsContent value="server-api" className="mt-0">
-                <ServerSideApiSection />
-              </TabsContent>
-              
-              <TabsContent value="settings" className="mt-0">
-                <UserProfileSection activeTab="settings" />
-              </TabsContent>
+              {/* Wrap all TabsContent components in a Tabs component */}
+              <Tabs value={activeTab} className="w-full">
+                <TabsContent value="dashboard" className="mt-0">
+                  <DashboardSection />
+                </TabsContent>
+                
+                <TabsContent value="profile" className="mt-0">
+                  <UserProfileSection activeTab="profile" />
+                </TabsContent>
+                
+                <TabsContent value="projects" className="mt-0">
+                  <UserProfileSection activeTab="projects" />
+                </TabsContent>
+                
+                <TabsContent value="api-keys" className="mt-0">
+                  <ApiKeySection />
+                </TabsContent>
+                
+                <TabsContent value="logs" className="mt-0">
+                  <LogsSection />
+                </TabsContent>
+                
+                <TabsContent value="audit" className="mt-0">
+                  <AuditLogsSection />
+                </TabsContent>
+                
+                <TabsContent value="sdk" className="mt-0">
+                  <SdkIntegrationSection />
+                </TabsContent>
+                
+                <TabsContent value="playground" className="mt-0">
+                  <PlaygroundSection />
+                </TabsContent>
+                
+                <TabsContent value="server-api" className="mt-0">
+                  <ServerSideApiSection />
+                </TabsContent>
+                
+                <TabsContent value="settings" className="mt-0">
+                  <UserProfileSection activeTab="settings" />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
         </div>
