@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ApiKey {
   id: string;
@@ -20,6 +21,7 @@ export const useApiKeys = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
+  const { user } = useAuth();
 
   const { data: apiKeys, isLoading } = useQuery({
     queryKey: ['api-keys'],
@@ -35,6 +37,15 @@ export const useApiKeys = () => {
   });
 
   const generateApiKey = async (keyName: string, environment: 'test' | 'production') => {
+    if (!user) {
+      toast({
+        title: 'Error',
+        description: 'You must be logged in to generate API keys',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     setIsGenerating(true);
     try {
       const prefix = `gl_${environment === 'production' ? 'live' : 'test'}_`;
@@ -48,6 +59,7 @@ export const useApiKeys = () => {
         key_value: keyValue,
         prefix,
         environment,
+        user_id: user.id,
       });
 
       if (error) throw error;
