@@ -770,7 +770,6 @@ const DocumentationSection = ({ version = "v2.5" }: DocumentationSectionProps) =
     }
   }, []);
 
-  // Add version display
   const versionBadge = version !== "v2.5" ? (
     <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
       {version}
@@ -795,12 +794,6 @@ const DocumentationSection = ({ version = "v2.5" }: DocumentationSectionProps) =
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10">
-          {isMobile && (
-            <div className="lg:hidden mb-6">
-              <GlobalDocSearch sections={sections} />
-            </div>
-          )}
-
           <div className="flex-1">
             <div className="mb-8 max-w-3xl mx-auto">
               <GlobalDocSearch sections={sections} />
