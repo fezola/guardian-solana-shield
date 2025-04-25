@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DocumentationSidebar from "@/components/DocumentationSidebar";
 import { useEffect, useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Documentation = () => {
   const [currentVersion, setCurrentVersion] = useState("v2.5");
@@ -15,6 +16,14 @@ const Documentation = () => {
     
     // Track page view
     console.log("Analytics: Documentation page viewed");
+
+    // Ensure the current theme is applied
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, []);
 
   const handleVersionChange = (version: string) => {
