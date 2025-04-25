@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { PrivateRoute } from "@/components/PrivateRoute";
 import Index from "./pages/Index";
 import Documentation from "./pages/Documentation";
 import DeveloperTools from "./pages/DeveloperTools";
@@ -27,17 +29,35 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/documentation" element={<Documentation />} />
-          <Route path="/developer-tools" element={<DeveloperTools />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<UserProfile />} />
-          <Route path="/api-keys" element={<UserProfile />} />
-          <Route path="/logs" element={<UserProfile />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/documentation" element={<Documentation />} />
+            <Route path="/developer-tools" element={<DeveloperTools />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="/dashboard" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="/api-keys" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="/logs" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
