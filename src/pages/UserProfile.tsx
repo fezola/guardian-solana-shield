@@ -1,19 +1,11 @@
-
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import UserProfileSection from "@/components/UserProfileSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  User, 
-  Shield, 
-  Key, 
-  Settings, 
-  Activity, 
-  FileText, 
-  Code, 
-  Database, 
-  ChartBar 
+  User, Shield, Key, Settings, Activity, 
+  FileText, Code, Database, ChartBar 
 } from "lucide-react";
 import DashboardSection from "@/components/DashboardSection";
 import LogsSection from "@/components/LogsSection";
@@ -36,9 +28,8 @@ const UserProfile = () => {
             <div className="w-full md:w-64 shrink-0">
               <div className="bg-card p-4 rounded-xl shadow-md border border-border/50 sticky top-24">
                 <h2 className="font-bold text-lg mb-4">Developer Dashboard</h2>
-                <nav className="space-y-1">
-                  {/* Wrap TabsList in a Tabs component */}
-                  <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <nav>
+                  <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical">
                     <TabsList className="flex flex-col w-full h-auto space-y-1">
                       <TabsTrigger 
                         value="dashboard" 
@@ -132,8 +123,7 @@ const UserProfile = () => {
             </div>
             
             {/* Main Content */}
-            <div className="flex-1">
-              {/* Wrap all TabsContent components in a Tabs component */}
+            <div className="flex-1 min-w-0">
               <Tabs value={activeTab} className="w-full">
                 <TabsContent value="dashboard" className="mt-0">
                   <DashboardSection />
