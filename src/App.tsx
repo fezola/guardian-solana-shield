@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PrivateRoute } from "@/components/PrivateRoute";
-import { HelmetProvider } from 'react-helmet-async';
 import Index from "./pages/Index";
 import Documentation from "./pages/Documentation";
 import DeveloperTools from "./pages/DeveloperTools";
@@ -26,43 +25,41 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/documentation" element={<Documentation />} />
-              <Route path="/developer-tools" element={<DeveloperTools />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/profile" element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              } />
-              <Route path="/dashboard" element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              } />
-              <Route path="/api-keys" element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              } />
-              <Route path="/logs" element={
-                <PrivateRoute>
-                  <UserProfile />
-                </PrivateRoute>
-              } />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </HelmetProvider>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/documentation" element={<Documentation />} />
+            <Route path="/developer-tools" element={<DeveloperTools />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="/dashboard" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="/api-keys" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="/logs" element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            } />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
