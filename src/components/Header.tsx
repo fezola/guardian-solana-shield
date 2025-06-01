@@ -1,145 +1,89 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X } from "lucide-react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, Shield, Wallet } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // Handle scroll events for header styling
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  // Close mobile menu when navigating to a new page
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
-
-  // Handle anchor link clicks on same page
-  const handleAnchorClick = (anchor: string) => {
-    if (location.pathname === '/') {
-      // If we're on the homepage, just scroll to the anchor
-      const element = document.getElementById(anchor);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        setIsMenuOpen(false);
-      }
-    } else {
-      // If we're on another page, navigate to homepage with anchor
-      navigate(`/#${anchor}`);
-    }
-  };
-
-  // Handle "Get Started" button click
-  const handleGetStarted = () => {
-    navigate("/developer-tools");
-  };
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300 ${
-        isScrolled 
-          ? "backdrop-blur-md bg-background/90 shadow-sm border-b border-border/50" 
-          : "bg-transparent"
-      }`}
-    >
-      <div className="container flex justify-between items-center">
-        <Link to="/" className="flex items-center gap-2 group">
-          <Shield className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
-          <span className="text-xl font-bold gradient-text">GuardianLayer</span>
-        </Link>
-        
-        {/* Mobile menu button */}
-        <button className="md:hidden text-foreground" onClick={toggleMenu} aria-label="Toggle menu">
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-        
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <Shield className="h-8 w-8 text-primary" />
+          <Link to="/" className="text-xl font-bold gradient-text">
+            Guardian Shield
+          </Link>
+        </div>
+
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          <button 
-            onClick={() => handleAnchorClick('features')} 
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Features
-          </button>
-          <button 
-            onClick={() => handleAnchorClick('how-it-works')} 
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            How It Works
-          </button>
-          <button 
-            onClick={() => handleAnchorClick('integration')} 
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Integration
-          </button>
-          <Link 
-            to="/documentation" 
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors ml-2"
-          >
+        <nav className="hidden md:flex items-center space-x-6">
+          <Link to="/documentation" className="text-sm font-medium hover:text-primary transition-colors">
             Documentation
           </Link>
-          <Button
-            className="button-glow"
-            onClick={handleGetStarted}
-          >
+          <Link to="/developer-tools" className="text-sm font-medium hover:text-primary transition-colors">
+            Developer Tools
+          </Link>
+          <Link to="/wallet" className="text-sm font-medium hover:text-primary transition-colors flex items-center space-x-1">
+            <Wallet className="w-4 h-4" />
+            <span>Wallet</span>
+          </Link>
+        </nav>
+
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
+          <Link to="/login">
+            <Button variant="outline" size="sm">
+              Login
+            </Button>
+          </Link>
+          <Button size="sm">
             Get Started
           </Button>
-        </nav>
-        
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-background border-b border-border/50 md:hidden py-4 animate-fade-in">
-            <nav className="container flex flex-col gap-4">
-              <button
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={() => handleAnchorClick('features')}
-              >
-                Features
-              </button>
-              <button
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={() => handleAnchorClick('how-it-works')}
-              >
-                How It Works
-              </button>
-              <button
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-                onClick={() => handleAnchorClick('integration')}
-              >
-                Integration
-              </button>
-              <Link 
-                to="/documentation" 
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-              >
-                Documentation
-              </Link>
-              <Button
-                className="w-full button-glow"
-                onClick={handleGetStarted}
-              >
-                Get Started
-              </Button>
-            </nav>
-          </div>
-        )}
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t bg-background/95 backdrop-blur">
+          <nav className="container py-4 space-y-4">
+            <Link 
+              to="/documentation" 
+              className="block text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Documentation
+            </Link>
+            <Link 
+              to="/developer-tools" 
+              className="block text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Developer Tools
+            </Link>
+            <Link 
+              to="/wallet" 
+              className="block text-sm font-medium hover:text-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <div className="flex items-center space-x-2">
+                <Wallet className="w-4 h-4" />
+                <span>Wallet</span>
+              </div>
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

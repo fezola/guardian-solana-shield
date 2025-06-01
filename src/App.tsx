@@ -13,6 +13,7 @@ import DeveloperTools from "./pages/DeveloperTools";
 import NotFound from "./pages/NotFound";
 import UserProfile from "./pages/UserProfile";
 import Login from "./pages/Login";
+import { WalletApp } from "./wallet/pages/WalletApp";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/documentation" element={<Documentation />} />
               <Route path="/developer-tools" element={<DeveloperTools />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/wallet" element={<WalletApp />} />
               <Route path="/profile" element={
                 <PrivateRoute>
                   <UserProfile />
