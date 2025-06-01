@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Shield, Wallet } from "lucide-react";
-import { ThemeToggle } from "./ThemeToggle";
+import ThemeToggle from "./ThemeToggle";
 import { Link } from "react-router-dom";
 
 const Header = () => {

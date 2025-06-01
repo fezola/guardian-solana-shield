@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { useToast } from '@/hooks/use-toast';
+import { SecureSend } from './SecureSend';
 
 export const WalletDashboard: React.FC = () => {
   const { 
@@ -163,28 +163,7 @@ export const WalletDashboard: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="send">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Send className="w-5 h-5" />
-                  <span>Send Tokens</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <Send className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">Send Feature Coming Soon</h3>
-                  <p className="text-muted-foreground mb-4">
-                    This will include our complete Guardian security stack with transaction simulation, 
-                    biometric verification, and time-lock features.
-                  </p>
-                  <Button disabled>
-                    <Shield className="w-4 h-4 mr-2" />
-                    Secure Send (Coming Soon)
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <SecureSend />
           </TabsContent>
 
           <TabsContent value="receive">
