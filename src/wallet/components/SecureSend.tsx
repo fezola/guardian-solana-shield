@@ -15,7 +15,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { SecurityOptions } from './SecurityOptions';
-import { TransactionSimulator } from './TransactionSimulator';
+import { RiskAnalyzer } from './RiskAnalyzer';
 import { useWallet } from '../context/WalletContext';
 import { SecurityOptions as SecurityOptionsType, RiskAnalysis } from '../types';
 import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
@@ -36,9 +36,8 @@ export const SecureSend: React.FC = () => {
   });
   
   const [transaction, setTransaction] = useState<Transaction | null>(null);
-  const [isSimulating, setIsSimulating] = useState(false);
   const [riskAnalysis, setRiskAnalysis] = useState<RiskAnalysis | null>(null);
-  const [securityStep, setSecurityStep] = useState<'setup' | 'simulation' | 'verification' | 'sending'>('setup');
+  const [securityStep, setSecurityStep] = useState<'setup' | 'analysis' | 'verification' | 'sending'>('setup');
   const [pin, setPin] = useState('');
   const [otpCode, setOtpCode] = useState('');
 
@@ -76,18 +75,12 @@ export const SecureSend: React.FC = () => {
     const tx = await createTransaction();
     if (tx) {
       setTransaction(tx);
-      if (securityOptions.simulate) {
-        setSecurityStep('simulation');
-        setIsSimulating(true);
-      } else {
-        setSecurityStep('verification');
-      }
+      setSecurityStep('analysis');
     }
   };
 
-  const handleSimulationComplete = (analysis: RiskAnalysis) => {
+  const handleAnalysisComplete = (analysis: RiskAnalysis) => {
     setRiskAnalysis(analysis);
-    setIsSimulating(false);
     setSecurityStep('verification');
   };
 
@@ -282,7 +275,7 @@ export const SecureSend: React.FC = () => {
                 className="w-full"
               >
                 <Shield className="w-4 h-4 mr-2" />
-                Prepare Secure Transaction
+                Analyze & Prepare Transaction
               </Button>
             </CardContent>
           </Card>
@@ -294,11 +287,10 @@ export const SecureSend: React.FC = () => {
         </>
       )}
 
-      {securityStep === 'simulation' && (
-        <TransactionSimulator
+      {securityStep === 'analysis' && (
+        <RiskAnalyzer
           transaction={transaction}
-          onSimulationComplete={handleSimulationComplete}
-          isSimulating={isSimulating}
+          onAnalysisComplete={handleAnalysisComplete}
         />
       )}
 

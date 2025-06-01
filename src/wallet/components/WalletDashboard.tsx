@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,11 +12,15 @@ import {
   Shield, 
   Copy,
   RefreshCw,
-  Settings
+  Settings,
+  Coins,
+  Users
 } from 'lucide-react';
 import { useWallet } from '../context/WalletContext';
 import { useToast } from '@/hooks/use-toast';
 import { SecureSend } from './SecureSend';
+import { TokenManager } from './TokenManager';
+import { RecoveryManager } from './RecoveryManager';
 
 export const WalletDashboard: React.FC = () => {
   const { 
@@ -126,11 +131,13 @@ export const WalletDashboard: React.FC = () => {
 
         {/* Main Content */}
         <Tabs defaultValue="tokens" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="tokens">Tokens</TabsTrigger>
             <TabsTrigger value="send">Send</TabsTrigger>
             <TabsTrigger value="receive">Receive</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
+            <TabsTrigger value="manage">Manage</TabsTrigger>
+            <TabsTrigger value="recovery">Recovery</TabsTrigger>
           </TabsList>
 
           <TabsContent value="tokens">
@@ -239,6 +246,14 @@ export const WalletDashboard: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="manage">
+            <TokenManager />
+          </TabsContent>
+
+          <TabsContent value="recovery">
+            <RecoveryManager />
           </TabsContent>
         </Tabs>
       </div>
