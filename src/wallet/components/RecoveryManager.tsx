@@ -245,7 +245,7 @@ export const RecoveryManager: React.FC = () => {
                 ))}
               </div>
             )}
-          </div>
+          </CardContent>
         </Card>
       )}
 
