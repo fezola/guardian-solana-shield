@@ -3,9 +3,10 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import UserProfileSection from "@/components/UserProfileSection";
+import ProjectsSection from "@/components/ProjectsSection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  User, Shield, Key, Settings, Activity
+  User, Shield, Key, Settings, Activity, FolderOpen
 } from "lucide-react";
 import DashboardSection from "@/components/DashboardSection";
 import ApiKeySection from "@/components/ApiKeySection";
@@ -34,6 +35,20 @@ const UserProfile = () => {
                         Overview
                       </TabsTrigger>
                       <TabsTrigger 
+                        value="projects" 
+                        className="justify-start w-full"
+                      >
+                        <FolderOpen className="h-4 w-4 mr-2" />
+                        Projects
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="api-keys" 
+                        className="justify-start w-full"
+                      >
+                        <Key className="h-4 w-4 mr-2" />
+                        API Keys
+                      </TabsTrigger>
+                      <TabsTrigger 
                         value="profile" 
                         className="justify-start w-full"
                       >
@@ -46,13 +61,6 @@ const UserProfile = () => {
                       >
                         <Shield className="h-4 w-4 mr-2" />
                         Security
-                      </TabsTrigger>
-                      <TabsTrigger 
-                        value="api-keys" 
-                        className="justify-start w-full"
-                      >
-                        <Key className="h-4 w-4 mr-2" />
-                        API Keys
                       </TabsTrigger>
                       <TabsTrigger 
                         value="settings" 
@@ -74,16 +82,20 @@ const UserProfile = () => {
                   <DashboardSection />
                 </TabsContent>
                 
+                <TabsContent value="projects" className="mt-0">
+                  <ProjectsSection />
+                </TabsContent>
+                
+                <TabsContent value="api-keys" className="mt-0">
+                  <ApiKeySection />
+                </TabsContent>
+                
                 <TabsContent value="profile" className="mt-0">
                   <UserProfileSection activeTab="profile" />
                 </TabsContent>
                 
                 <TabsContent value="security" className="mt-0">
                   <UserProfileSection activeTab="security" />
-                </TabsContent>
-                
-                <TabsContent value="api-keys" className="mt-0">
-                  <ApiKeySection />
                 </TabsContent>
                 
                 <TabsContent value="settings" className="mt-0">

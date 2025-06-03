@@ -3,136 +3,79 @@ import { Activity, AlertTriangle, CheckCircle, Clock, Globe, Key, Lock, Shield, 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-// Mock data for dashboard
-const securityEvents = [
-  { id: 1, event: "Phishing Attempt Blocked", wallet: "0x1a2...3b4c", date: "2025-04-22", status: "blocked" },
-  { id: 2, event: "Timelock Trigger", wallet: "0x5d6...7e8f", date: "2025-04-21", status: "triggered" },
-  { id: 3, event: "Suspicious Transaction", wallet: "0x9g0...1h2i", date: "2025-04-20", status: "flagged" },
-  { id: 4, event: "Multiple Auth Failures", wallet: "0x3j4...5k6l", date: "2025-04-20", status: "blocked" },
-  { id: 5, event: "Recovery Attempt", wallet: "0x7m8...9n0o", date: "2025-04-19", status: "verified" },
-];
-
-const geoData = [
-  { country: "United States", percent: 35 },
-  { country: "Germany", percent: 18 },
-  { country: "Singapore", percent: 15 },
-  { country: "United Kingdom", percent: 12 },
-  { country: "Others", percent: 20 },
-];
-
-const flaggedTransactions = [
-  { 
-    id: "tx-001", 
-    type: "Transfer", 
-    from: "0x1a2...3b4c", 
-    to: "0x5d6...7e8f", 
-    amount: "5.2 ETH", 
-    risk: "high", 
-    reason: "Suspicious recipient (known scammer)", 
-    action: "blocked" 
-  },
-  { 
-    id: "tx-002", 
-    type: "Approval", 
-    from: "0x9g0...1h2i", 
-    to: "0x3j4...5k6l", 
-    amount: "∞", 
-    risk: "high", 
-    reason: "Unlimited approval", 
-    action: "allowed" 
-  },
-  { 
-    id: "tx-003", 
-    type: "Swap", 
-    from: "0x7m8...9n0o", 
-    to: "0xp1q...r2s3", 
-    amount: "1,250 USDC", 
-    risk: "medium", 
-    reason: "High slippage (15%)", 
-    action: "warned" 
-  },
-  { 
-    id: "tx-004", 
-    type: "NFT Purchase", 
-    from: "0xt4u...v5w6", 
-    to: "0xx7y...z8a9", 
-    amount: "0.8 ETH", 
-    risk: "medium", 
-    reason: "Price significantly above floor", 
-    action: "flagged" 
-  },
-  { 
-    id: "tx-005", 
-    type: "Transfer", 
-    from: "0xb1c...d2e3", 
-    to: "0xf4g...h5i6", 
-    amount: "200,000 USDC", 
-    risk: "high", 
-    reason: "Unusual amount for this wallet", 
-    action: "blocked" 
-  },
-];
-
-const integrationHealth = [
-  { project: "My Solana dApp", sdkVersion: "1.3.2", lastPing: "2 minutes ago", status: "healthy" },
-  { project: "NFT Marketplace", sdkVersion: "1.3.1", lastPing: "5 hours ago", status: "healthy" },
-  { project: "DeFi Dashboard", sdkVersion: "1.2.8", lastPing: "2 days ago", status: "outdated" },
-];
+import { useProjects } from "@/hooks/useProjects";
+import { useSecurityEvents } from "@/hooks/useSecurityEvents";
+import { useApiUsage } from "@/hooks/useApiUsage";
+import { useApiKeys } from "@/hooks/useApiKeys";
+import { format } from "date-fns";
 
 const DashboardSection = () => {
+  const { projects, isLoading: projectsLoading } = useProjects();
+  const { securityEvents, isLoading: eventsLoading } = useSecurityEvents();
+  const { usageStats, recentUsage, isLoading: usageLoading } = useApiUsage();
+  const { apiKeys, isLoading: keysLoading } = useApiKeys();
+
+  // Calculate stats from real data
+  const activeProjects = projects?.filter(p => p.status === 'active').length || 0;
+  const totalApiKeys = apiKeys?.length || 0;
+  const threatCount = securityEvents?.filter(e => e.severity === 'high' || e.severity === 'critical').length || 0;
+
+  if (projectsLoading || eventsLoading || usageLoading || keysLoading) {
+    return <div className="flex items-center justify-center p-8">Loading dashboard...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Protected Wallets</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Shield className="h-4 w-4 mr-2 text-primary" />
-              <span className="text-2xl font-bold">2,546</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">+124 this month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Transactions Secured</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Lock className="h-4 w-4 mr-2 text-primary" />
-              <span className="text-2xl font-bold">18,354</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">+2,841 this month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Threats Blocked</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
-              <span className="text-2xl font-bold">347</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">+43 this month</p>
-          </CardContent>
-        </Card>
-
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Activity className="h-4 w-4 mr-2 text-green-500" />
-              <span className="text-2xl font-bold">8</span>
+              <Shield className="h-4 w-4 mr-2 text-primary" />
+              <span className="text-2xl font-bold">{activeProjects}</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">3 in development</p>
+            <p className="text-xs text-muted-foreground mt-1">Projects in development</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">API Requests</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <Lock className="h-4 w-4 mr-2 text-primary" />
+              <span className="text-2xl font-bold">{usageStats?.totalRequests || 0}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">{usageStats?.requestsThisMonth || 0} this month</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Security Threats</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
+              <span className="text-2xl font-bold">{threatCount}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">High/Critical severity</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">API Keys</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center">
+              <Key className="h-4 w-4 mr-2 text-green-500" />
+              <span className="text-2xl font-bold">{totalApiKeys}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Active keys</p>
           </CardContent>
         </Card>
       </div>
@@ -140,65 +83,92 @@ const DashboardSection = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Latest Security Events</CardTitle>
-            <CardDescription>Recent security events across your projects</CardDescription>
+            <CardTitle>Recent Security Events</CardTitle>
+            <CardDescription>Latest security events across your projects</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Event</TableHead>
-                  <TableHead>Wallet</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {securityEvents.map((event) => (
-                  <TableRow key={event.id}>
-                    <TableCell className="font-medium">{event.event}</TableCell>
-                    <TableCell className="font-mono text-sm">{event.wallet}</TableCell>
-                    <TableCell>{event.date}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        event.status === "blocked" ? "bg-red-100 text-red-800" :
-                        event.status === "triggered" ? "bg-yellow-100 text-yellow-800" :
-                        event.status === "flagged" ? "bg-orange-100 text-orange-800" :
-                        "bg-green-100 text-green-800"
-                      }`}>
-                        {event.status === "blocked" ? <XCircle className="h-3 w-3 mr-1" /> :
-                         event.status === "triggered" ? <Clock className="h-3 w-3 mr-1" /> :
-                         event.status === "flagged" ? <AlertTriangle className="h-3 w-3 mr-1" /> :
-                         <CheckCircle className="h-3 w-3 mr-1" />}
-                        {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                      </span>
-                    </TableCell>
+            {securityEvents && securityEvents.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Event</TableHead>
+                    <TableHead>Severity</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {securityEvents.slice(0, 5).map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell className="font-medium">{event.event_type}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          event.severity === "critical" ? "bg-red-100 text-red-800" :
+                          event.severity === "high" ? "bg-orange-100 text-orange-800" :
+                          event.severity === "medium" ? "bg-yellow-100 text-yellow-800" :
+                          "bg-green-100 text-green-800"
+                        }`}>
+                          {event.severity.charAt(0).toUpperCase() + event.severity.slice(1)}
+                        </span>
+                      </TableCell>
+                      <TableCell>{format(new Date(event.created_at), 'MMM dd, yyyy')}</TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          event.status === "resolved" ? "bg-green-100 text-green-800" :
+                          event.status === "investigating" ? "bg-yellow-100 text-yellow-800" :
+                          "bg-red-100 text-red-800"
+                        }`}>
+                          {event.status === "resolved" ? <CheckCircle className="h-3 w-3 mr-1" /> :
+                           event.status === "investigating" ? <Clock className="h-3 w-3 mr-1" /> :
+                           <AlertTriangle className="h-3 w-3 mr-1" />}
+                          {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No security events detected</p>
+                <p className="text-sm">Your projects are secure</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Top Geographies</CardTitle>
-            <CardDescription>User distribution by country</CardDescription>
+            <CardTitle>API Performance</CardTitle>
+            <CardDescription>Response times and success rates</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {geoData.map((item, index) => (
-                <div key={index}>
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center">
-                      <Globe className="h-3 w-3 mr-1 text-muted-foreground" />
-                      <span className="text-sm">{item.country}</span>
-                    </div>
-                    <span className="text-sm font-medium">{item.percent}%</span>
-                  </div>
-                  <Progress value={item.percent} className="h-1" />
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm">Success Rate</span>
+                  <span className="text-sm font-medium">
+                    {usageStats?.totalRequests ? Math.round((usageStats.successfulRequests / usageStats.totalRequests) * 100) : 0}%
+                  </span>
                 </div>
-              ))}
+                <Progress 
+                  value={usageStats?.totalRequests ? (usageStats.successfulRequests / usageStats.totalRequests) * 100 : 0} 
+                  className="h-2" 
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm">Avg Response Time</span>
+                  <span className="text-sm font-medium">{usageStats?.averageResponseTime || 0}ms</span>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm">Total Requests</span>
+                  <span className="text-sm font-medium">{usageStats?.totalRequests || 0}</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -207,95 +177,66 @@ const DashboardSection = () => {
       <div className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Flagged Transactions</CardTitle>
-            <CardDescription>Recently flagged or blocked transactions</CardDescription>
+            <CardTitle>Your Projects</CardTitle>
+            <CardDescription>Manage and monitor your active projects</CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Risk</TableHead>
-                  <TableHead>Reason</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {flaggedTransactions.map((tx) => (
-                  <TableRow key={tx.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{tx.type}</div>
-                        <div className="text-xs text-muted-foreground font-mono">
-                          {tx.from.substring(0, 8)}...→{tx.to.substring(0, 8)}
+            {projects && projects.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Environment</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {projects.slice(0, 10).map((project) => (
+                    <TableRow key={project.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{project.name}</div>
+                          {project.description && (
+                            <div className="text-xs text-muted-foreground truncate max-w-xs">
+                              {project.description}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{tx.amount}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        tx.risk === "high" ? "bg-red-100 text-red-800" :
-                        tx.risk === "medium" ? "bg-yellow-100 text-yellow-800" :
-                        "bg-green-100 text-green-800"
-                      }`}>
-                        {tx.risk.charAt(0).toUpperCase() + tx.risk.slice(1)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">{tx.reason}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        tx.action === "blocked" ? "bg-red-100 text-red-800" :
-                        tx.action === "warned" ? "bg-yellow-100 text-yellow-800" :
-                        tx.action === "flagged" ? "bg-orange-100 text-orange-800" :
-                        "bg-green-100 text-green-800"
-                      }`}>
-                        {tx.action.charAt(0).toUpperCase() + tx.action.slice(1)}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Integration Health</CardTitle>
-            <CardDescription>Status of your SDK integrations</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Project</TableHead>
-                  <TableHead>SDK Version</TableHead>
-                  <TableHead>Last Ping</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {integrationHealth.map((item, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{item.project}</TableCell>
-                    <TableCell className="font-mono text-sm">{item.sdkVersion}</TableCell>
-                    <TableCell>{item.lastPing}</TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        item.status === "healthy" ? "bg-green-100 text-green-800" :
-                        "bg-yellow-100 text-yellow-800"
-                      }`}>
-                        {item.status === "healthy" ? 
-                          <CheckCircle className="h-3 w-3 mr-1" /> : 
-                          <AlertTriangle className="h-3 w-3 mr-1" />}
-                        {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          project.environment === "production" ? "bg-red-100 text-red-800" :
+                          project.environment === "staging" ? "bg-yellow-100 text-yellow-800" :
+                          "bg-blue-100 text-blue-800"
+                        }`}>
+                          {project.environment.charAt(0).toUpperCase() + project.environment.slice(1)}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          project.status === "active" ? "bg-green-100 text-green-800" :
+                          project.status === "paused" ? "bg-yellow-100 text-yellow-800" :
+                          "bg-gray-100 text-gray-800"
+                        }`}>
+                          {project.status === "active" ? 
+                            <CheckCircle className="h-3 w-3 mr-1" /> : 
+                            <Clock className="h-3 w-3 mr-1" />}
+                          {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                        </span>
+                      </TableCell>
+                      <TableCell>{format(new Date(project.created_at), 'MMM dd, yyyy')}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No projects created yet</p>
+                <p className="text-sm">Create your first project to get started</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

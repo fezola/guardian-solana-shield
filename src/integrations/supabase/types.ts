@@ -48,6 +48,63 @@ export type Database = {
         }
         Relationships: []
       }
+      api_usage: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          endpoint: string
+          id: string
+          method: string
+          project_id: string | null
+          request_size_bytes: number | null
+          response_size_bytes: number | null
+          response_time_ms: number | null
+          status_code: number
+          user_id: string
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          endpoint: string
+          id?: string
+          method: string
+          project_id?: string | null
+          request_size_bytes?: number | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code: number
+          user_id: string
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          endpoint?: string
+          id?: string
+          method?: string
+          project_id?: string | null
+          request_size_bytes?: number | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_usage_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "api_usage_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       code_examples: {
         Row: {
           code: string
@@ -186,6 +243,89 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string | null
+          environment: string
+          id: string
+          name: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          environment: string
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          environment?: string
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      security_events: {
+        Row: {
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          project_id: string | null
+          severity: string
+          status: string
+          transaction_hash: string | null
+          user_id: string
+          wallet_address: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          project_id?: string | null
+          severity: string
+          status?: string
+          transaction_hash?: string | null
+          user_id: string
+          wallet_address?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          project_id?: string | null
+          severity?: string
+          status?: string
+          transaction_hash?: string | null
+          user_id?: string
+          wallet_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_events_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_profiles: {
         Row: {
