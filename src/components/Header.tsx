@@ -1,12 +1,14 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Shield, Wallet } from "lucide-react";
+import { Menu, X, Shield, Wallet, User } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -34,14 +36,31 @@ const Header = () => {
 
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          <Link to="/login">
-            <Button variant="outline" size="sm">
-              Login
-            </Button>
-          </Link>
-          <Button size="sm">
-            Get Started
-          </Button>
+          
+          {user ? (
+            <div className="flex items-center space-x-2">
+              <Link to="/profile">
+                <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline">{user.email}</span>
+                </Button>
+              </Link>
+              <Button variant="outline" size="sm" onClick={signOut}>
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="outline" size="sm">
+                  Login
+                </Button>
+              </Link>
+              <Button size="sm">
+                Get Started
+              </Button>
+            </>
+          )}
 
           {/* Mobile menu button */}
           <button
@@ -81,6 +100,27 @@ const Header = () => {
                 <span>Wallet</span>
               </div>
             </Link>
+            
+            {user && (
+              <div className="pt-4 border-t space-y-2">
+                <Link 
+                  to="/profile" 
+                  className="block text-sm font-medium hover:text-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Profile
+                </Link>
+                <button 
+                  onClick={() => {
+                    signOut();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block text-sm font-medium hover:text-primary transition-colors"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </nav>
         </div>
       )}
