@@ -103,8 +103,8 @@ const DocumentationSidebar = ({ currentVersion, onVersionChange }: Documentation
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <div className="flex items-center px-4 py-2">
+      <SidebarHeader className="pb-2">
+        <div className="flex items-center px-4 py-3">
           <BookOpen className="mr-2 h-5 w-5" />
           <span className="font-semibold text-lg">Documentation</span>
           <div className="ml-auto flex items-center space-x-2">
@@ -113,7 +113,7 @@ const DocumentationSidebar = ({ currentVersion, onVersionChange }: Documentation
           </div>
         </div>
         <div className="px-4 py-2">
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-3">
             <div className="flex justify-between items-center">
               <VersionSelector onVersionChange={onVersionChange} />
             </div>
@@ -130,20 +130,23 @@ const DocumentationSidebar = ({ currentVersion, onVersionChange }: Documentation
         </div>
       </SidebarHeader>
       <SidebarSeparator />
-      <SidebarContent>
+
+      <SidebarContent className="pt-3 overflow-y-auto max-h-[calc(100vh-220px)]">
         <SidebarGroup>
-          <SidebarGroupLabel>Documentation</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-4 py-2">Documentation</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-4 px-2">
               {filteredItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="mb-3">
                   <SidebarMenuButton asChild tooltip={item.description}>
-                    <a href={item.href} className="flex flex-col">
-                      <div className="flex items-center mb-1">
-                        <item.icon className="h-4 w-4 mr-2 shrink-0" />
-                        <span>{item.title}</span>
+                    <a href={item.href} className="flex items-start py-3 px-4 rounded-md hover:bg-accent/50 transition-colors">
+                      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center mr-3">
+                        <item.icon className="h-4 w-4" />
                       </div>
-                      <span className="text-xs text-muted-foreground pl-6">{item.description}</span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm">{item.title}</span>
+                        <span className="text-xs text-muted-foreground mt-1.5">{item.description}</span>
+                      </div>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
