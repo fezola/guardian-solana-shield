@@ -1,8 +1,8 @@
 
 import { useState } from "react";
 import { Link, Check } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useToast } from "@/components/ui/use-toast";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useToast } from "@/hooks/use-toast";
 
 interface AnchorLinkProps {
   id: string;
@@ -26,22 +26,20 @@ const AnchorLink = ({ id }: AnchorLinkProps) => {
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={copyAnchorLink}
-            className="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-foreground"
-            aria-label="Copy anchor link"
-          >
-            {copied ? <Check className="h-4 w-4" /> : <Link className="h-4 w-4" />}
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Copy anchor link</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          onClick={copyAnchorLink}
+          className="ml-2 inline-flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-foreground"
+          aria-label="Copy anchor link"
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Link className="h-4 w-4" />}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Copy anchor link</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
