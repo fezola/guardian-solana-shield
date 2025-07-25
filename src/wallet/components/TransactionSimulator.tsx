@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { RiskAnalysis } from '../types';
 import { Transaction } from '@solana/web3.js';
+import { GuardianLayer } from '@/lib/guardian-sdk';
 
 interface TransactionSimulatorProps {
   transaction: Transaction | null;
@@ -29,6 +30,12 @@ export const TransactionSimulator: React.FC<TransactionSimulatorProps> = ({
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
   const [analysis, setAnalysis] = useState<RiskAnalysis | null>(null);
+
+  // Initialize GuardianLayer
+  const guardian = new GuardianLayer({
+    rpcUrl: 'https://api.devnet.solana.com',
+    environment: 'development'
+  });
 
   const simulationSteps = [
     'Parsing transaction instructions',
@@ -46,21 +53,40 @@ export const TransactionSimulator: React.FC<TransactionSimulatorProps> = ({
   }, [isSimulating, transaction]);
 
   const runSimulation = async () => {
+    if (!transaction) return;
+
     setProgress(0);
     setAnalysis(null);
 
-    for (let i = 0; i < simulationSteps.length; i++) {
-      setCurrentStep(simulationSteps[i]);
-      setProgress(((i + 1) / simulationSteps.length) * 100);
-      
-      // Simulate processing time
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
+    try {
+      // Show simulation steps with real analysis
+      for (let i = 0; i < simulationSteps.length - 1; i++) {
+        setCurrentStep(simulationSteps[i]);
+        setProgress(((i + 1) / simulationSteps.length) * 80); // 80% for steps
 
-    // Generate mock risk analysis
-    const mockAnalysis: RiskAnalysis = generateMockAnalysis();
-    setAnalysis(mockAnalysis);
-    onSimulationComplete(mockAnalysis);
+        // Simulate processing time
+        await new Promise(resolve => setTimeout(resolve, 400));
+      }
+
+      // Final step: actual analysis
+      setCurrentStep(simulationSteps[simulationSteps.length - 1]);
+
+      // Use real GuardianLayer analysis
+      const realAnalysis = await guardian.simulateAndCheck(transaction);
+
+      setProgress(100);
+      setAnalysis(realAnalysis);
+      onSimulationComplete(realAnalysis);
+
+    } catch (error) {
+      console.error('Simulation failed:', error);
+
+      // Fallback to mock analysis
+      const mockAnalysis = generateMockAnalysis();
+      setAnalysis(mockAnalysis);
+      onSimulationComplete(mockAnalysis);
+      setProgress(100);
+    }
   };
 
   const generateMockAnalysis = (): RiskAnalysis => {

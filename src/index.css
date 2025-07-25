@@ -3,6 +3,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Documentation page specific styles */
+.documentation-content {
+  @apply prose prose-slate dark:prose-invert max-w-none;
+}
+
+.documentation-content pre {
+  @apply bg-muted rounded-lg p-4 overflow-x-auto;
+}
+
+.documentation-content code {
+  @apply bg-muted px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.documentation-content pre code {
+  @apply bg-transparent p-0;
+}
+
+/* Smooth scrolling for documentation sections */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for sidebar */
+.documentation-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.documentation-sidebar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.documentation-sidebar::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full;
+}
+
+/* Ensure sidebar content is properly visible */
+[data-sidebar="sidebar"] {
+  min-width: 20rem !important;
+  width: 20rem !important;
+}
+
+/* Improve sidebar text wrapping */
+[data-sidebar="sidebar"] .sidebar-menu-item {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Ensure sidebar doesn't collapse too much on smaller screens */
+@media (min-width: 768px) {
+  [data-sidebar="sidebar"] {
+    min-width: 18rem !important;
+  }
+}
+
+.documentation-sidebar::-webkit-scrollbar-thumb:hover {
+  @apply bg-border/80;
+}
+
+/* Mobile sidebar animation */
+@media (max-width: 768px) {
+  .mobile-sidebar-enter {
+    transform: translateX(-100%);
+  }
+
+  .mobile-sidebar-enter-active {
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .mobile-sidebar-exit {
+    transform: translateX(0);
+  }
+
+  .mobile-sidebar-exit-active {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+}
+
 @layer base {
   :root {
     --background: 240 10% 3.9%;

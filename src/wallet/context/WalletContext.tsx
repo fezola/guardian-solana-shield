@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { Connection, PublicKey, Keypair, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js';
 import { WalletToken, TransactionRecord, SecurityOptions, GuardianTransaction } from '../types';
 import { useToast } from '@/hooks/use-toast';
+import { GuardianLayer } from '@/lib/guardian-sdk';
+import { TokenService } from '@/lib/guardian-sdk/token-service';
 
 interface WalletContextType {
   connection: Connection;
@@ -32,6 +34,16 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Use devnet for development
   const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+
+  // Initialize GuardianLayer SDK
+  const guardian = new GuardianLayer({
+    rpcUrl: 'https://api.devnet.solana.com',
+    environment: 'development',
+    modules: ['txSecurity', 'recovery', 'biometric', 'otp']
+  });
+
+  // Initialize Token Service
+  const tokenService = new TokenService(connection);
 
   const publicKey = wallet?.publicKey || null;
 
@@ -85,8 +97,8 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [toast]);
 
-  const sendTransaction = useCallback(async (transaction: GuardianTransaction, securityOptions: SecurityOptions) => {
-    if (!wallet) {
+  const sendTransaction = useCallback(async (guardianTransaction: GuardianTransaction, securityOptions: SecurityOptions) => {
+    if (!wallet || !publicKey) {
       toast({
         title: "Error",
         description: "No wallet connected",
@@ -97,31 +109,64 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     try {
       setIsLoading(true);
-      
-      // This is where Guardian security checks would be implemented
-      console.log('Guardian Security: Processing transaction with options:', securityOptions);
-      
+
+      const { transaction } = guardianTransaction;
+
+      // Get recent blockhash
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = publicKey;
+
+      // Sign transaction
+      transaction.sign(wallet);
+
+      // Use GuardianLayer for security analysis
+      const result = await guardian.secureTransaction({
+        transaction,
+        userEmail: securityOptions.emailAddress,
+        options: securityOptions
+      });
+
+      if (!result.success) {
+        throw new Error('Transaction blocked by security analysis');
+      }
+
+      // Send transaction
       const signature = await sendAndConfirmTransaction(connection, transaction, [wallet]);
-      
+
+      // Add to transaction history
+      const newTransaction: TransactionRecord = {
+        signature,
+        timestamp: Date.now(),
+        type: 'send',
+        amount: guardianTransaction.metadata.amount || 0,
+        token: guardianTransaction.metadata.token || 'SOL',
+        from: publicKey.toString(),
+        to: guardianTransaction.metadata.recipient || '',
+        status: 'confirmed',
+        fees: guardianTransaction.metadata.estimatedFees,
+      };
+
+      setTransactions(prev => [newTransaction, ...prev]);
+
       toast({
         title: "Transaction Sent",
         description: `Transaction confirmed: ${signature}`,
       });
-      
+
       // Refresh balances and transactions
-      await refreshBalance();
-      await refreshTransactions();
-    } catch (error) {
+      await Promise.all([refreshBalance(), refreshTokens()]);
+    } catch (error: any) {
       console.error('Error sending transaction:', error);
       toast({
         title: "Transaction Failed",
-        description: "Failed to send transaction. Please try again.",
+        description: error.message || "Failed to send transaction. Please try again.",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
-  }, [wallet, connection, toast]);
+  }, [wallet, publicKey, connection, toast, guardian, refreshBalance, refreshTokens]);
 
   const refreshBalance = useCallback(async () => {
     if (!publicKey) return;
@@ -136,9 +181,14 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const refreshTokens = useCallback(async () => {
     if (!publicKey) return;
-    
+
     try {
-      // For now, just set SOL token
+      // Use TokenService to get all tokens
+      const walletTokens = await tokenService.getTokenAccounts(publicKey);
+      setTokens(walletTokens);
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+      // Fallback to SOL only
       setTokens([
         {
           mint: 'So11111111111111111111111111111111111111112',
@@ -148,10 +198,8 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           decimals: 9,
         }
       ]);
-    } catch (error) {
-      console.error('Error fetching tokens:', error);
     }
-  }, [publicKey, balance]);
+  }, [publicKey, balance, tokenService]);
 
   const refreshTransactions = useCallback(async () => {
     if (!publicKey) return;
