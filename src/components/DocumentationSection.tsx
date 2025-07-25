@@ -783,22 +783,12 @@ const DocumentationSection = ({ version = "v2.5" }: DocumentationSectionProps) =
   return (
     <section id="documentation" className="py-12 lg:py-24">
       <div className="container">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <h2 className="text-3xl font-bold gradient-text animate-fade-in">Documentation</h2>
-            {versionBadge}
-          </div>
-          <p className="text-muted-foreground max-w-2xl mx-auto animate-fade-in">
-            Comprehensive guides, tutorials, and technical references for integrating GuardianLayer security features.
-          </p>
-        </div>
-
         <div className="flex flex-col lg:flex-row gap-10">
           <div className="flex-1">
             <div className="mb-8 max-w-3xl mx-auto">
               <GlobalDocSearch sections={sections} />
             </div>
-            
+
             <div className="space-y-16">
               {sections.map((section) => (
                 <div

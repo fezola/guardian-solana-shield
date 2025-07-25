@@ -1,34 +1,15 @@
-import { 
-  FileText, 
-  Code, 
-  Terminal, 
-  Shield, 
-  Settings, 
-  Key, 
-  Database,
-  BookOpen,
-  Search
-} from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import VersionSelector from "@/components/VersionSelector";
-import GlobalDocSearch from "@/components/GlobalDocSearch";
-import ThemeToggle from "@/components/ThemeToggle";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarSeparator,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+  FileText,
+  Code,
+  Terminal,
+  Shield,
+  Settings,
+  Key,
+  Database
+} from "lucide-react";
+import VersionSelector from "@/components/VersionSelector";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
 
 const documentationItems = [
   { 
@@ -93,83 +74,46 @@ interface DocumentationSidebarProps {
 }
 
 const DocumentationSidebar = ({ currentVersion, onVersionChange }: DocumentationSidebarProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const isMobile = useIsMobile();
 
-  const filteredItems = documentationItems.filter(item => 
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="pb-2">
-        <div className="flex items-center px-4 py-3">
-          <BookOpen className="mr-2 h-5 w-5" />
-          <span className="font-semibold text-lg">Documentation</span>
-          <div className="ml-auto flex items-center space-x-2">
-            <ThemeToggle />
-            <SidebarTrigger />
-          </div>
+    <div className="fixed left-0 top-0 z-40 h-screen w-80 bg-background border-r border-border">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex items-center space-x-2">
+          <Shield className="h-8 w-8 text-primary" />
+          <Link to="/" className="text-xl font-bold gradient-text">
+            Guardian Shield
+          </Link>
         </div>
-        <div className="px-4 py-2">
-          <div className="flex flex-col space-y-3">
-            <div className="flex justify-between items-center">
-              <VersionSelector onVersionChange={onVersionChange} />
-            </div>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search section..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-9"
-              />
-            </div>
-          </div>
-        </div>
-      </SidebarHeader>
-      <SidebarSeparator />
+        <VersionSelector onVersionChange={onVersionChange} />
+      </div>
 
-      <SidebarContent className="pt-3 overflow-y-auto max-h-[calc(100vh-220px)]">
-        <SidebarGroup>
-          <SidebarGroupLabel className="px-4 py-2">Documentation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-4 px-2">
-              {filteredItems.map((item) => (
-                <SidebarMenuItem key={item.title} className="mb-3">
-                  <SidebarMenuButton asChild tooltip={item.description}>
-                    <a href={item.href} className="flex items-start py-3 px-4 rounded-md hover:bg-accent/50 transition-colors">
-                      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center mr-3">
-                        <item.icon className="h-4 w-4" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-medium text-sm">{item.title}</span>
-                        <span className="text-xs text-muted-foreground mt-1.5">{item.description}</span>
-                      </div>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <div className="p-4">
-          <div className="rounded-md bg-primary/10 p-3">
-            <h4 className="text-xs font-medium flex items-center">
-              <FileText className="h-3.5 w-3.5 mr-1" />
-              Latest Updates
-            </h4>
-            <div className="mt-2 text-xs">
-              <p className="text-muted-foreground">API {currentVersion} is now available with improved zkProof circuit performance</p>
-              <a href="#" className="text-primary text-xs mt-1 inline-block hover:underline">Read more</a>
-            </div>
-          </div>
-        </div>
-      </SidebarFooter>
-    </Sidebar>
+      {/* Navigation */}
+      <div className="flex-1 overflow-y-auto px-6 py-4 documentation-sidebar" style={{ height: 'calc(100vh - 90px)' }}>
+        <nav className="space-y-1">
+          {documentationItems.map((item) => (
+            <a
+              key={item.title}
+              href={item.href}
+              className="group flex items-start space-x-3 rounded-lg px-3 py-3 text-sm transition-all hover:bg-accent/50 hover:text-accent-foreground"
+            >
+              <div className="flex-shrink-0 mt-0.5">
+                <item.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-foreground group-hover:text-primary transition-colors leading-tight">
+                  {item.title}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  {item.description}
+                </div>
+              </div>
+            </a>
+          ))}
+        </nav>
+      </div>
+    </div>
   );
 };
 

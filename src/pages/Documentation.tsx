@@ -1,11 +1,9 @@
 
-import { SidebarProvider } from "@/components/ui/sidebar";
 import DocumentationSection from "@/components/DocumentationSection";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import DocumentationSidebar from "@/components/DocumentationSidebar";
 import { useEffect, useState } from "react";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const Documentation = () => {
   const [currentVersion, setCurrentVersion] = useState("v2.5");
@@ -32,18 +30,30 @@ const Documentation = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex flex-col w-full dark:bg-background dark:text-foreground">
+    <div className="min-h-screen bg-background">
+
+      {/* Fixed Header - Full width */}
+      <div className="fixed top-0 left-0 right-0 z-30 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
         <Header />
-        <div className="flex flex-1">
-          <DocumentationSidebar currentVersion={currentVersion} onVersionChange={handleVersionChange} />
-          <main className="flex-1 pt-16">
-            <DocumentationSection version={currentVersion} />
-          </main>
+      </div>
+
+      {/* Desktop Sidebar - Hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block">
+        <DocumentationSidebar currentVersion={currentVersion} onVersionChange={handleVersionChange} />
+      </div>
+
+      {/* Main Content - Full width on mobile, offset on desktop */}
+      <main className="lg:ml-80 pt-16">
+        <div className="min-h-screen">
+          <DocumentationSection version={currentVersion} />
         </div>
+      </main>
+
+      {/* Footer - Full width on mobile, offset on desktop */}
+      <div className="lg:ml-80">
         <Footer />
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
