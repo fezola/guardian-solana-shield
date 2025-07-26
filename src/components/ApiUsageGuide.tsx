@@ -1,25 +1,11 @@
 
-import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Code, Key, Zap, Shield, Copy, Check, ExternalLink } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Code, Key, Zap, Shield, ExternalLink } from "lucide-react";
+import CodeBlock from "./CodeBlock";
 
 const ApiUsageGuide = () => {
-  const { toast } = useToast();
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-
-  const copyToClipboard = (code: string, type: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCode(type);
-    setTimeout(() => setCopiedCode(null), 2000);
-    toast({
-      title: "Code copied",
-      description: "Code has been copied to your clipboard",
-    });
-  };
 
   const sdkExample = `import { GuardianShield } from '@guardian-shield/sdk';
 
@@ -177,23 +163,10 @@ function App() {
         <TabsContent value="sdk" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                SDK Implementation Example
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(sdkExample, 'sdk')}
-                >
-                  {copiedCode === 'sdk' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                </Button>
-              </CardTitle>
+              <CardTitle>SDK Implementation Example</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-muted/50 p-4 rounded-md overflow-x-auto">
-                <pre className="text-sm">
-                  <code>{sdkExample}</code>
-                </pre>
-              </div>
+              <CodeBlock code={sdkExample} language="javascript" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -201,23 +174,10 @@ function App() {
         <TabsContent value="api" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                REST API Implementation Example
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(apiExample, 'api')}
-                >
-                  {copiedCode === 'api' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                </Button>
-              </CardTitle>
+              <CardTitle>REST API Implementation Example</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-muted/50 p-4 rounded-md overflow-x-auto">
-                <pre className="text-sm">
-                  <code>{apiExample}</code>
-                </pre>
-              </div>
+              <CodeBlock code={apiExample} language="javascript" />
             </CardContent>
           </Card>
         </TabsContent>
@@ -225,23 +185,10 @@ function App() {
         <TabsContent value="react" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                React Component Example
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(reactComponentExample, 'react')}
-                >
-                  {copiedCode === 'react' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                </Button>
-              </CardTitle>
+              <CardTitle>React Component Example</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-muted/50 p-4 rounded-md overflow-x-auto">
-                <pre className="text-sm">
-                  <code>{reactComponentExample}</code>
-                </pre>
-              </div>
+              <CodeBlock code={reactComponentExample} language="javascript" />
             </CardContent>
           </Card>
         </TabsContent>

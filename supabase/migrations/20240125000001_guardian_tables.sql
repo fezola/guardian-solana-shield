@@ -108,6 +108,31 @@ CREATE TABLE IF NOT EXISTS user_security_settings (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Recovery Requests table for tracking recovery processes
+CREATE TABLE IF NOT EXISTS recovery_requests (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    recovery_method TEXT NOT NULL CHECK (recovery_method IN ('email', 'social', 'phrase')),
+    status TEXT NOT NULL DEFAULT 'initiated' CHECK (status IN ('initiated', 'pending', 'approved', 'completed', 'cancelled', 'expired')),
+    guardian_approvals JSONB DEFAULT '{}',
+    required_approvals INTEGER DEFAULT 2,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Security Events table for audit logging
+CREATE TABLE IF NOT EXISTS security_events (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    event_type TEXT NOT NULL,
+    details JSONB DEFAULT '{}',
+    ip_address INET,
+    user_agent TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_otp_logs_email ON otp_logs(email);
 CREATE INDEX IF NOT EXISTS idx_otp_logs_expires_at ON otp_logs(expires_at);
@@ -121,6 +146,10 @@ CREATE INDEX IF NOT EXISTS idx_transaction_analysis_risk_level ON transaction_an
 CREATE INDEX IF NOT EXISTS idx_scam_database_address ON scam_database(address);
 CREATE INDEX IF NOT EXISTS idx_token_registry_mint_address ON token_registry(mint_address);
 CREATE INDEX IF NOT EXISTS idx_token_registry_symbol ON token_registry(symbol);
+CREATE INDEX IF NOT EXISTS idx_recovery_requests_user_id ON recovery_requests(user_id);
+CREATE INDEX IF NOT EXISTS idx_recovery_requests_status ON recovery_requests(status);
+CREATE INDEX IF NOT EXISTS idx_security_events_user_id ON security_events(user_id);
+CREATE INDEX IF NOT EXISTS idx_security_events_event_type ON security_events(event_type);
 
 -- Row Level Security (RLS) policies
 ALTER TABLE otp_logs ENABLE ROW LEVEL SECURITY;
@@ -128,6 +157,8 @@ ALTER TABLE biometric_credentials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE wallet_addresses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transaction_analysis ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_security_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE recovery_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE security_events ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for user-specific data
 CREATE POLICY "Users can view their own OTP logs" ON otp_logs

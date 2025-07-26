@@ -1,7 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Copy, CheckCircle } from "lucide-react";
 import CodeBlock from "./CodeBlock";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
@@ -389,13 +388,6 @@ func verifyTransaction(gl *guardian.GuardianLayer, tx map[string]interface{}) (b
 
 const ServerSideApiSection = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("nodejs");
-  const [copiedSection, setCopiedSection] = useState<{ language: string, section: string } | null>(null);
-  
-  const handleCopy = (language: string, section: string, code: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedSection({ language, section });
-    setTimeout(() => setCopiedSection(null), 2000);
-  };
   
   return (
     <div className="space-y-6">
@@ -432,29 +424,12 @@ const ServerSideApiSection = () => {
               <CardTitle>Authentication Verification</CardTitle>
               <CardDescription>Verify authentication challenges server-side</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={codeExamples[selectedLanguage].authentication}
-                language={selectedLanguage === "nodejs" ? "javascript" : 
+                language={selectedLanguage === "nodejs" ? "javascript" :
                          selectedLanguage === "python" ? "python" : "go"}
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(
-                  selectedLanguage, 
-                  "authentication", 
-                  codeExamples[selectedLanguage].authentication
-                )}
-              >
-                {copiedSection?.language === selectedLanguage && 
-                 copiedSection?.section === "authentication" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
           
@@ -463,29 +438,12 @@ const ServerSideApiSection = () => {
               <CardTitle>Webhook Handling</CardTitle>
               <CardDescription>Securely receive and process GuardianLayer webhooks</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={codeExamples[selectedLanguage].webhook}
-                language={selectedLanguage === "nodejs" ? "javascript" : 
+                language={selectedLanguage === "nodejs" ? "javascript" :
                          selectedLanguage === "python" ? "python" : "go"}
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(
-                  selectedLanguage, 
-                  "webhook", 
-                  codeExamples[selectedLanguage].webhook
-                )}
-              >
-                {copiedSection?.language === selectedLanguage && 
-                 copiedSection?.section === "webhook" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
           
@@ -494,29 +452,12 @@ const ServerSideApiSection = () => {
               <CardTitle>Transaction Analysis</CardTitle>
               <CardDescription>Analyze transaction risk on the server</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={codeExamples[selectedLanguage].transaction}
-                language={selectedLanguage === "nodejs" ? "javascript" : 
+                language={selectedLanguage === "nodejs" ? "javascript" :
                          selectedLanguage === "python" ? "python" : "go"}
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(
-                  selectedLanguage, 
-                  "transaction", 
-                  codeExamples[selectedLanguage].transaction
-                )}
-              >
-                {copiedSection?.language === selectedLanguage && 
-                 copiedSection?.section === "transaction" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
         </div>

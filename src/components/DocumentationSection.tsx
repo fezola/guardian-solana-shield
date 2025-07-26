@@ -8,6 +8,7 @@ import SdkIntegrationSection from "./SdkIntegrationSection";
 import PlaygroundSection from "./PlaygroundSection";
 import ServerSideApiSection from "./ServerSideApiSection";
 import DemoAppSection from "./DemoAppSection";
+import RecoveryConfigSection from "./RecoveryConfigSection";
 import DocumentationSearch from "./DocumentationSearch";
 import AnchorLink from "./AnchorLink";
 import FeedbackWidget from "./FeedbackWidget";
@@ -606,124 +607,8 @@ const isKnownDevice = await verifier.verifyDeviceProof(proof);`}
     icon: Settings,
     title: "Recovery Configuration",
     id: "recovery-config",
-    lastUpdated: "2025-04-05",
-    content: (
-      <div>
-        <h3 className="text-lg font-bold mb-4">Wallet Recovery Options</h3>
-
-        <div className="space-y-6">
-          <div>
-            <h4 className="font-semibold mb-2">Shamir Secret Sharing</h4>
-            <p className="text-muted-foreground mb-3">
-              Split your wallet recovery key into multiple shares, requiring a threshold number to recover:
-            </p>
-            <CodeBlock
-              code={`// Generate recovery shares
-const recovery = await guardian.setupRecovery({
-  method: 'shamir',
-  threshold: 2,  // Number of shares needed for recovery
-  shares: 3,     // Total number of shares
-  // Optional: where to deliver the shares
-  delivery: [
-    { type: 'email', destination: 'backup1@example.com' },
-    { type: 'email', destination: 'backup2@example.com' },
-    { type: 'download', destination: 'local' } // Save locally
-  ]
-});
-
-// To recover with 2 or more shares later:
-const wallet = await guardian.recoverWallet({
-  method: 'shamir',
-  shares: [share1, share2] // The collected shares
-});`}
-            />
-          </div>
-          
-          <div>
-            <h4 className="font-semibold mb-2">Time-locked Recovery</h4>
-            <p className="text-muted-foreground mb-3">
-              Set up a backup key that can only be used after a security delay window:
-            </p>
-            <CodeBlock
-              code={`// Set up time-locked recovery
-await guardian.setupRecovery({
-  method: 'timelock',
-  waitPeriod: 7 * 24 * 60 * 60, // 7 days in seconds
-  notificationEmail: 'your@email.com', // For recovery attempt alerts
-});
-
-// Start recovery process (initiates waiting period)
-await guardian.initiateRecovery({
-  method: 'timelock',
-  backupKey: yourBackupKey
-});
-
-// After wait period expires:
-const wallet = await guardian.completeRecovery({
-  method: 'timelock',
-  backupKey: yourBackupKey,
-  recoveryId: recoveryId // From initiateRecovery
-});`}
-            />
-          </div>
-          
-          <div>
-            <h4 className="font-semibold mb-2">Social Recovery (Guardians)</h4>
-            <p className="text-muted-foreground mb-3">
-              Designate trusted contacts as guardians who can help recover your wallet:
-            </p>
-            <CodeBlock
-              code={`// Set up social recovery with guardians
-await guardian.setupRecovery({
-  method: 'guardians',
-  threshold: 3, // Number of guardians required
-  guardians: [
-    { email: 'guardian1@example.com', name: 'Alice' },
-    { email: 'guardian2@example.com', name: 'Bob' },
-    { email: 'guardian3@example.com', name: 'Charlie' },
-    { email: 'guardian4@example.com', name: 'Dave' },
-    { email: 'guardian5@example.com', name: 'Eve' }
-  ]
-});
-
-// To recover (will email verification requests to guardians):
-const recoveryId = await guardian.initiateRecovery({
-  method: 'guardians',
-  userEmail: 'your@email.com'
-});
-
-// Guardians approve via links in their emails
-// Once threshold is met, complete recovery:
-const wallet = await guardian.completeRecovery({
-  method: 'guardians',
-  recoveryId: recoveryId
-});`}
-            />
-          </div>
-        </div>
-        
-        <div className="mt-6 p-4 rounded-lg bg-muted/20 border border-border">
-          <h4 className="font-semibold mb-3">Recovery Best Practices</h4>
-          <ul className="list-disc ml-5 space-y-2">
-            <li>
-              <strong>Combine methods:</strong> Use multiple recovery methods for added security
-            </li>
-            <li>
-              <strong>Test recovery:</strong> Regularly test your recovery process in a safe environment
-            </li>
-            <li>
-              <strong>Update guardians:</strong> Periodically review and update your guardian list
-            </li>
-            <li>
-              <strong>Secure your backup:</strong> Store recovery shares in different physical locations
-            </li>
-            <li>
-              <strong>Use reliable guardians:</strong> Choose guardians who are security-conscious and reachable
-            </li>
-          </ul>
-        </div>
-      </div>
-    ),
+    lastUpdated: "2025-04-25",
+    content: <RecoveryConfigSection />
   },
   {
     icon: Key,

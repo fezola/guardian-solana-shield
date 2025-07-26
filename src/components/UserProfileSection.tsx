@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { User, Settings, Shield, Code, Database } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -93,24 +92,10 @@ const UserProfileSection = ({ activeTab = "projects" }) => {
         </div>
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs defaultValue={activeTab} value={activeTab} className="w-full">
-        <TabsList className="grid grid-cols-3 mb-6">
-          <TabsTrigger value="profile">
-            <User className="h-4 w-4 mr-2" />
-            Profile
-          </TabsTrigger>
-          <TabsTrigger value="security">
-            <Shield className="h-4 w-4 mr-2" />
-            Security
-          </TabsTrigger>
-          <TabsTrigger value="settings">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="profile" className="space-y-6">
+      {/* Main Content */}
+      <div className="w-full">
+        {activeTab === "profile" && (
+          <div className="space-y-6">
           <form onSubmit={(e) => {
             e.preventDefault();
             handleUpdateProfile(new FormData(e.currentTarget));
@@ -147,44 +132,49 @@ const UserProfileSection = ({ activeTab = "projects" }) => {
               </CardFooter>
             </Card>
           </form>
-        </TabsContent>
+          </div>
+        )}
 
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-              <CardDescription>Manage your account security preferences.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-semibold">Two-Factor Authentication</h4>
-                  <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
+        {activeTab === "security" && (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Security Settings</CardTitle>
+                <CardDescription>Manage your account security preferences.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold">Two-Factor Authentication</h4>
+                    <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
+                  </div>
+                  <Switch disabled />
                 </div>
-                <Switch disabled />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-        <TabsContent value="settings" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Preferences</CardTitle>
-              <CardDescription>Manage your account settings and preferences.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-semibold">Email Notifications</h4>
-                  <p className="text-sm text-muted-foreground">Receive updates about your account</p>
+        {activeTab === "settings" && (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Preferences</CardTitle>
+                <CardDescription>Manage your account settings and preferences.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-semibold">Email Notifications</h4>
+                    <p className="text-sm text-muted-foreground">Receive updates about your account</p>
+                  </div>
+                  <Switch defaultChecked />
                 </div>
-                <Switch defaultChecked />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

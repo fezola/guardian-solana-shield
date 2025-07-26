@@ -10,10 +10,35 @@ import { TokenInfo, WalletToken } from './types';
 export class TokenService {
   private connection: Connection;
   private tokenRegistry: Map<string, TokenInfo> = new Map();
+  private lastRequestTime = 0;
+  private readonly MIN_REQUEST_INTERVAL = 500; // 500ms between requests for official RPC
 
   constructor(connection: Connection) {
     this.connection = connection;
     this.initializeTokenRegistry();
+  }
+
+  // Rate limiting wrapper for RPC calls
+  private async rateLimitedRequest<T>(requestFn: () => Promise<T>): Promise<T> {
+    const now = Date.now();
+    const timeSinceLastRequest = now - this.lastRequestTime;
+
+    if (timeSinceLastRequest < this.MIN_REQUEST_INTERVAL) {
+      await new Promise(resolve => setTimeout(resolve, this.MIN_REQUEST_INTERVAL - timeSinceLastRequest));
+    }
+
+    this.lastRequestTime = Date.now();
+
+    try {
+      return await requestFn();
+    } catch (error: any) {
+      if (error.message?.includes('429') || error.message?.includes('Too Many Requests')) {
+        console.log('Rate limited, waiting 3 seconds before retry...');
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        return await requestFn();
+      }
+      throw error;
+    }
   }
 
   private initializeTokenRegistry() {
@@ -65,8 +90,10 @@ export class TokenService {
     try {
       const tokens: WalletToken[] = [];
 
-      // Get SOL balance
-      const solBalance = await this.connection.getBalance(walletAddress);
+      // Get SOL balance with rate limiting
+      const solBalance = await this.rateLimitedRequest(() =>
+        this.connection.getBalance(walletAddress)
+      );
       tokens.push({
         mint: 'So11111111111111111111111111111111111111112',
         symbol: 'SOL',
@@ -76,10 +103,12 @@ export class TokenService {
         logoURI: this.tokenRegistry.get('So11111111111111111111111111111111111111112')?.logoURI
       });
 
-      // Get SPL token accounts
-      const tokenAccounts = await this.connection.getParsedTokenAccountsByOwner(
-        walletAddress,
-        { programId: TOKEN_PROGRAM_ID }
+      // Get SPL token accounts with rate limiting
+      const tokenAccounts = await this.rateLimitedRequest(() =>
+        this.connection.getParsedTokenAccountsByOwner(
+          walletAddress,
+          { programId: TOKEN_PROGRAM_ID }
+        )
       );
 
       for (const tokenAccount of tokenAccounts.value) {

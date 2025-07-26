@@ -4,26 +4,33 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  Shield, 
-  XCircle, 
-  Fingerprint, 
+import {
+  AlertTriangle,
+  CheckCircle,
+  Shield,
+  XCircle,
+  Fingerprint,
   Key,
   Clock
 } from "lucide-react";
 import CodeBlock from "./CodeBlock";
 import { Badge } from "@/components/ui/badge";
+import { TransactionSecurityAPI } from "@/lib/api/transaction-security";
+import { TokenRegistryService } from "@/lib/api/token-registry";
+import { useToast } from "@/components/ui/use-toast";
+import { useApiKeys } from "@/hooks/useApiKeys";
 
 const PlaygroundSection = () => {
+  const { toast } = useToast();
+  const { apiKeys } = useApiKeys();
   const [activeTab, setActiveTab] = useState("transaction-security");
+  const [selectedApiKey, setSelectedApiKey] = useState("");
   const [transactionSimulation, setTransactionSimulation] = useState({
     type: "transfer",
     from: "0x1234...5678",
     to: "0xabcd...ef01",
     amount: "5",
-    token: "ETH",
+    token: "SOL",
     recipientType: "unknown",
   });
   const [simulationResult, setSimulationResult] = useState(null);
@@ -47,39 +54,73 @@ const PlaygroundSection = () => {
     });
   };
   
-  const runTransactionSimulation = () => {
-    setSimulationLoading(true);
-    
-    setTimeout(() => {
-      let risk;
-      let warnings = [];
-      
-      if (transactionSimulation.type === "approval") {
-        risk = "high";
-        warnings = ["Unlimited token approval requested", "Contract has not been audited"];
-      } else if (transactionSimulation.type === "transfer" && parseFloat(transactionSimulation.amount) > 3 && transactionSimulation.recipientType === "unknown") {
-        risk = "medium";
-        warnings = ["Large transaction to an unknown address", "Address not in your contacts"];
-      } else if (transactionSimulation.type === "swap" && parseFloat(transactionSimulation.amount) > 1) {
-        risk = "medium";
-        warnings = ["High slippage detected (12%)", "Price impact over 5%"];
-      } else {
-        risk = "low";
-        warnings = transactionSimulation.recipientType === "unknown" ? ["Address not in your contacts"] : [];
-      }
-      
-      setSimulationResult({
-        risk,
-        warnings,
-        timestamp: new Date().toISOString(),
-        securityRecommendations: {
-          biometric: risk !== "low",
-          otp: risk === "high",
-          confirmationDelay: risk === "high" ? 30 : 0
-        }
+  const runTransactionSimulation = async () => {
+    if (!selectedApiKey) {
+      toast({
+        title: "API Key Required",
+        description: "Please select an API key to run the simulation",
+        variant: "destructive"
       });
+      return;
+    }
+
+    setSimulationLoading(true);
+
+    try {
+      // Create a mock transaction object
+      const mockTransaction = {
+        type: transactionSimulation.type,
+        from: transactionSimulation.from,
+        to: transactionSimulation.to,
+        amount: parseFloat(transactionSimulation.amount),
+        token: transactionSimulation.token,
+        recipientType: transactionSimulation.recipientType,
+        instructions: [
+          {
+            programId: "11111111111111111111111111111112", // System program
+            keys: [
+              { pubkey: transactionSimulation.from, isSigner: true, isWritable: true },
+              { pubkey: transactionSimulation.to, isSigner: false, isWritable: true }
+            ],
+            data: Buffer.from("transfer")
+          }
+        ]
+      };
+
+      // Use the real API
+      const transactionAPI = new TransactionSecurityAPI();
+      const analysis = await transactionAPI.analyzeTransaction(mockTransaction, selectedApiKey);
+
+      // Transform the analysis result for display
+      const result = {
+        risk: analysis.risks.length > 2 ? 'high' : analysis.risks.length > 0 ? 'medium' : 'low',
+        warnings: analysis.risks.map(risk => risk.description),
+        timestamp: new Date().toISOString(),
+        estimatedFees: analysis.estimatedFees,
+        securityRecommendations: {
+          biometric: analysis.risks.some(risk => risk.severity === 'medium' || risk.severity === 'high'),
+          otp: analysis.risks.some(risk => risk.severity === 'high'),
+          confirmationDelay: analysis.risks.some(risk => risk.severity === 'high') ? 5 : 0
+        },
+        programInteractions: analysis.programInteractions
+      };
+
+      setSimulationResult(result);
+
+      toast({
+        title: "Analysis Complete",
+        description: "Transaction security analysis completed successfully"
+      });
+
+    } catch (error: any) {
+      toast({
+        title: "Analysis Failed",
+        description: error.message || "Failed to analyze transaction",
+        variant: "destructive"
+      });
+    } finally {
       setSimulationLoading(false);
-    }, 1500);
+    }
   };
   
   const runApiKeyTest = () => {
@@ -168,6 +209,27 @@ async function secureSendTransaction(tx) {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1">API Key</label>
+                      <Select value={selectedApiKey} onValueChange={setSelectedApiKey}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select API key for testing" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {apiKeys?.map((key) => (
+                            <SelectItem key={key.id} value={key.key_value}>
+                              {key.key_name} ({key.environment})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {!selectedApiKey && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Select an API key to enable real transaction analysis
+                        </p>
+                      )}
+                    </div>
+
                     <div>
                       <label className="block text-sm font-medium mb-1">Transaction Type</label>
                       <Select value={transactionSimulation.type} onValueChange={handleTransactionTypeChange}>

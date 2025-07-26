@@ -21,6 +21,12 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // Polyfill for Buffer and other Node.js globals
+      if (typeof global === 'undefined') {
+        var global = globalThis;
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

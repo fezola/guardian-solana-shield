@@ -1,10 +1,9 @@
 
 import { useState } from "react";
 import { TabsContent } from "@/components/ui/tabs";
-import CodeBlock from "./CodeBlock";
 import { Button } from "@/components/ui/button";
+import CodeBlock from "./CodeBlock";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Copy, CheckCircle } from "lucide-react";
 
 const frameworks = [
   { id: "react", name: "React" },
@@ -305,13 +304,6 @@ app.listen(3000, () => {
 
 const SdkIntegrationSection = () => {
   const [selectedFramework, setSelectedFramework] = useState("react");
-  const [copiedSection, setCopiedSection] = useState<string | null>(null);
-  
-  const handleCopy = (code: string, section: string) => {
-    navigator.clipboard.writeText(code);
-    setCopiedSection(section);
-    setTimeout(() => setCopiedSection(null), 2000);
-  };
   
   return (
     <div className="space-y-6">
@@ -339,23 +331,11 @@ const SdkIntegrationSection = () => {
               <CardTitle>Installation</CardTitle>
               <CardDescription>Install the required packages</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={codeExamples[selectedFramework].installation}
                 language="bash"
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(codeExamples[selectedFramework].installation, "installation")}
-              >
-                {copiedSection === "installation" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
           
@@ -364,23 +344,11 @@ const SdkIntegrationSection = () => {
               <CardTitle>Basic Setup</CardTitle>
               <CardDescription>Initialize the SDK in your application</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={codeExamples[selectedFramework].basicSetup}
                 language="javascript"
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(codeExamples[selectedFramework].basicSetup, "basicSetup")}
-              >
-                {copiedSection === "basicSetup" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
           
@@ -389,23 +357,11 @@ const SdkIntegrationSection = () => {
               <CardTitle>Secure Transaction</CardTitle>
               <CardDescription>Implement transaction security in your application</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={codeExamples[selectedFramework].secureTransaction}
                 language="javascript"
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(codeExamples[selectedFramework].secureTransaction, "secureTransaction")}
-              >
-                {copiedSection === "secureTransaction" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
         </div>
@@ -428,23 +384,11 @@ const SdkIntegrationSection = () => {
               <CardTitle>Webhook Handler Example</CardTitle>
               <CardDescription>Example code for handling GuardianLayer webhooks</CardDescription>
             </CardHeader>
-            <CardContent className="relative">
+            <CardContent>
               <CodeBlock
                 code={webhookExample}
                 language="javascript"
               />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="absolute top-2 right-2"
-                onClick={() => handleCopy(webhookExample, "webhook")}
-              >
-                {copiedSection === "webhook" ? (
-                  <CheckCircle className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
             </CardContent>
           </Card>
           

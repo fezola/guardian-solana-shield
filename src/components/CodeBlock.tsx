@@ -68,18 +68,18 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
 
   return (
     <div className="relative group">
-      <button 
+      <button
         onClick={handleCopy}
-        className="absolute right-2 top-2 p-1.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors"
+        className="absolute right-3 top-3 p-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
         aria-label="Copy code"
       >
         {copied ? (
-          <Check size={18} className="text-green-500" />
+          <Check size={16} className="text-green-400" />
         ) : (
-          <Copy size={18} className="text-primary" />
+          <Copy size={16} className="text-white/80" />
         )}
       </button>
-      <pre className="p-4 rounded-lg bg-black/90 text-white overflow-x-auto font-mono text-sm my-2 max-h-[500px] overflow-y-auto">
+      <pre className="code-block-container p-4 rounded-lg bg-gradient-to-br from-slate-900 to-slate-800 text-white overflow-x-auto font-mono text-sm my-2 max-h-[500px] overflow-y-auto border border-slate-700/50">
         <code>{highlightCode(code)}</code>
       </pre>
     </div>
